@@ -6,6 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "../../@/components/ui/data-table";
 import { studentColumns, staffColumns } from "./columns";
 import { Input } from "../../@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 export interface StaffMember {
   firstName: string;
@@ -48,32 +55,63 @@ export const loader: LoaderFunction = async (): Promise<Data> => {
 export default function Index() {
   const { staff, students } = useLoaderData<Data>();
   const [searchText, setSearchText] = useState("");
+  const [selectedSchool, setSelectedSchool] = useState("all");
   const filteredStaff = staff.filter(
-    (member) =>
-      member.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-      member.lastName.toLowerCase().includes(searchText.toLowerCase())
+    (member: StaffMember) =>
+      (selectedSchool === "all" || member.school === selectedSchool) &&
+      (member.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+        member.lastName.toLowerCase().includes(searchText.toLowerCase()))
   );
 
   const filteredStudents = students.filter(
-    (student) =>
-      student.studentName.toLowerCase().includes(searchText.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchText.toLowerCase())
+    (student: Student) =>
+      (selectedSchool === "all" || student.school === selectedSchool) &&
+      (student.studentName.toLowerCase().includes(searchText.toLowerCase()) ||
+        student.email.toLowerCase().includes(searchText.toLowerCase()))
   );
+
+  function getUniqueSchools(
+    staff: StaffMember[],
+    students: Student[]
+  ): string[] {
+    const schoolSet = new Set<string>();
+    staff.forEach((member) => schoolSet.add(member.school));
+    students.forEach((student) => schoolSet.add(student.school));
+    return Array.from(schoolSet);
+  }
 
   console.log("Staff Data:", staff);
   console.log("Students Data:", students);
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-         <Input
+      <h1 className="text-4xl font-bold text-center p-4 uppercase">
+        School App
+      </h1>
+      <Input
         type="text"
         placeholder="Search..."
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />
-      <h1 className="text-4xl font-bold text-center p-4 uppercase">
-        School App
-      </h1>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">Filter by School</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={() => setSelectedSchool("all")}>
+            All
+          </DropdownMenuItem>
+          {getUniqueSchools(staff, students).map((school: string) => (
+            <DropdownMenuItem
+              key={school}
+              onClick={() => setSelectedSchool(school)}
+            >
+              {school}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
       <Tabs defaultValue="students" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="students">Students</TabsTrigger>

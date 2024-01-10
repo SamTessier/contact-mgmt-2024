@@ -55,7 +55,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                       header.getContext()
                     )}
                     {header.column.getIsSorted() 
-                      ? (header.column.getIsSorted() === 'desc' ? ' 🔽' : ' 🔼')
+                      ? (header.column.getIsSorted() === 'desc' ? 'z-a' : 'a-z')
                       : ''}
                   </TableHead>
                 );
