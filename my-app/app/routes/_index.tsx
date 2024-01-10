@@ -2,6 +2,7 @@
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { authorize, getData } from "./sheets.server";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "../../@/components/ui/data-table"; // Import the DataTable component
 import { studentColumns, staffColumns } from "./columns"; // Import the column definitions
 
@@ -56,13 +57,22 @@ export default function Index() {
       <h1 className="text-4xl font-bold text-center p-4 uppercase">
         School App
       </h1>
-      <div className="px-6">
-        <h2 className="text-2xl font-bold mb-4">Students</h2>
-        <DataTable columns={studentColumns} data={students} />
+      <Tabs defaultValue="students" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="students">Students</TabsTrigger>
+          <TabsTrigger value="staff">Staff</TabsTrigger>
+        </TabsList>
 
-        <h2 className="text-2xl font-bold mb-4 mt-8">Staff</h2>
-        <DataTable columns={staffColumns} data={staff} />
-      </div>
+        <TabsContent value="students">
+          <h2 className="text-2xl font-bold mb-4">Students</h2>
+          <DataTable columns={studentColumns} data={students} />
+        </TabsContent>
+
+        <TabsContent value="staff">
+          <h2 className="text-2xl font-bold mb-4">Staff</h2>
+          <DataTable columns={staffColumns} data={staff} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
