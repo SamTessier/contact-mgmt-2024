@@ -1,12 +1,12 @@
-// app/routes/_index.tsx
+import React, { useState } from "react";
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { authorize, getData } from "./sheets.server";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable } from "../../@/components/ui/data-table"; // Import the DataTable component
-import { studentColumns, staffColumns } from "./columns"; // Import the column definitions
+import { DataTable } from "../../@/components/ui/data-table";
+import { studentColumns, staffColumns } from "./columns";
+import { Input } from "../../@/components/ui/input";
 
-// Define the data structure for a single staff member
 interface StaffMember {
   firstName: string;
   lastName: string;
@@ -16,7 +16,6 @@ interface StaffMember {
   availability: string;
 }
 
-// Define the data structure for a single student
 interface Student {
   school: string;
   studentName: string;
@@ -28,12 +27,10 @@ interface Student {
   parentTwo: string;
 }
 
-// Update the Data interface to use these new structures
 interface Data {
   staff: StaffMember[];
   students: Student[];
 }
-
 
 export const meta: MetaFunction = () => {
   return [
@@ -50,10 +47,30 @@ export const loader: LoaderFunction = async (): Promise<Data> => {
 
 export default function Index() {
   const { staff, students } = useLoaderData<Data>();
+  const [searchText, setSearchText] = useState("");
+  const filteredStaff = staff.filter(
+    (member) =>
+      member.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+      member.lastName.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const filteredStudents = students.filter(
+    (student) =>
+      student.studentName.toLowerCase().includes(searchText.toLowerCase()) ||
+      student.email.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   console.log("Staff Data:", staff);
   console.log("Students Data:", students);
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
+         <Input
+        type="text"
+        placeholder="Search..."
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+      />
       <h1 className="text-4xl font-bold text-center p-4 uppercase">
         School App
       </h1>
@@ -65,12 +82,12 @@ export default function Index() {
 
         <TabsContent value="students">
           <h2 className="text-2xl font-bold mb-4">Students</h2>
-          <DataTable columns={studentColumns} data={students} />
+          <DataTable columns={studentColumns} data={filteredStudents} />
         </TabsContent>
 
         <TabsContent value="staff">
           <h2 className="text-2xl font-bold mb-4">Staff</h2>
-          <DataTable columns={staffColumns} data={staff} />
+          <DataTable columns={staffColumns} data={filteredStaff} />
         </TabsContent>
       </Tabs>
     </div>
