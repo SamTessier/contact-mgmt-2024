@@ -72,24 +72,27 @@ export async function authorize() {
  */
 export async function getData(auth) {
   const sheets = google.sheets({ version: "v4", auth });
+
+  // Headers for the staff and students sheets
+  const staffHeaders = ['firstName', 'lastName', 'school', 'phone', 'email', 'availability'];
+  const studentHeaders = ['school', 'studentName', 'weeklySchedule', 'notes', 'email', 'phoneOne', 'parentOne', 'parentTwo'];
+
+  // Fetching data for Staff
   const staffRes = await sheets.spreadsheets.values.get({
     spreadsheetId: "17bP4VBjiElXYd4ibo__zDFaI4iSyn42LqvhJgpBbbYA",
     range: "Staff!A2:F101",
   });
-  const staffRows = staffRes.data.values;
+  const staffRows = staffRes.data.values || [];
+  const staff = staffRows.map(row => Object.fromEntries(row.map((cell, index) => [staffHeaders[index], cell])));
 
-  // For the "Students" sheet
+  // Fetching data for Students
   const studentsRes = await sheets.spreadsheets.values.get({
     spreadsheetId: "17bP4VBjiElXYd4ibo__zDFaI4iSyn42LqvhJgpBbbYA",
     range: "Students!A2:I401",
   });
-  const studentsRows = studentsRes.data.values;
+  const studentsRows = studentsRes.data.values || [];
+  const students = studentsRows.map(row => Object.fromEntries(row.map((cell, index) => [studentHeaders[index], cell])));
 
-  // Combine the results
-  const combinedResults = {
-    staff: staffRows || [],
-    students: studentsRows || []
-  };
-
-  return combinedResults;
+  return { staff, students };
 }
+
