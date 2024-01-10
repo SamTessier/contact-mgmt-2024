@@ -13,6 +13,8 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { accountingColumns } from "./columns";
+
 
 export interface StaffMember {
   firstName: string;
@@ -116,6 +118,7 @@ export default function Index() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="students">Students</TabsTrigger>
           <TabsTrigger value="staff">Staff</TabsTrigger>
+          <TabsTrigger value="accounting">Accounting</TabsTrigger>
         </TabsList>
 
         <TabsContent value="students">
@@ -126,6 +129,11 @@ export default function Index() {
         <TabsContent value="staff">
           <h2 className="text-2xl font-bold mb-4">Staff</h2>
           <DataTable columns={staffColumns} data={filteredStaff} />
+        </TabsContent>
+
+        <TabsContent value="accounting">
+          <h2 className="text-2xl font-bold mb-4">Accounting</h2>
+          <DataTable columns={accountingColumns} data={filteredStudents} />
         </TabsContent>
       </Tabs>
     </div>

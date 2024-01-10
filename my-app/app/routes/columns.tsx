@@ -1,6 +1,8 @@
 // columns.tsx
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, CellContext } from "@tanstack/react-table";
 import type { Student, StaffMember } from "./_index";
+import { calculateMonthlyRate, countWeekdaysInMonth, rates } from '@/lib/utils';
+
 export const studentColumns: ColumnDef<Student>[] = [
   {
     accessorKey: "school",
@@ -74,5 +76,18 @@ export const staffColumns: ColumnDef<StaffMember>[] = [
     accessorKey: "availability",
     header: "Availability",
     
+  },
+];
+
+export const accountingColumns: ColumnDef<Student>[] = [
+  ...studentColumns,
+  {
+    accessorKey: 'billing',
+    header: 'Billing',
+    cell: (info: CellContext<Student, unknown>) => {
+      const weekdayCounts = countWeekdaysInMonth(2024, 1); 
+      const rate = calculateMonthlyRate(info.row.original.weeklySchedule, weekdayCounts);
+      return `$${rate.toFixed(2)}`;
+    }
   },
 ];
