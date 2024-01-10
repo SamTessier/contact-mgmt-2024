@@ -1,11 +1,13 @@
-"use client"
+"use client";
 
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+  getSortedRowModel,
+  SortingState
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -14,22 +16,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+
+import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]); 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
+  });
 
   return (
     <div className="rounded-md border">
@@ -39,26 +46,27 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                  <TableHead
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    {header.column.getIsSorted() 
+                      ? (header.column.getIsSorted() === 'desc' ? ' 🔽' : ' 🔼')
+                      : ''}
                   </TableHead>
-                )
+                );
               })}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
+              <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -76,5 +84,5 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

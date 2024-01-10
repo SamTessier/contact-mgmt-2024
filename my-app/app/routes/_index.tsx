@@ -7,7 +7,7 @@ import { DataTable } from "../../@/components/ui/data-table";
 import { studentColumns, staffColumns } from "./columns";
 import { Input } from "../../@/components/ui/input";
 
-interface StaffMember {
+export interface StaffMember {
   firstName: string;
   lastName: string;
   school: string;
@@ -16,7 +16,7 @@ interface StaffMember {
   availability: string;
 }
 
-interface Student {
+export interface Student {
   school: string;
   studentName: string;
   weeklySchedule: string;
