@@ -1,38 +1,11 @@
-# Welcome to Remix!
+# Contact Management System (Remix Edition)
 
-- [Remix Docs](https://remix.run/docs)
+## About the Project
 
-## Development
+This project is a work-in-progress Remix application designed to interface with an existing Google Sheets database. It's an iteration of a previous contact management system, tailored specifically for the needs of the business it's being developed for. By leveraging Google Sheets as a database, it seamlessly integrates into the business's existing workflow.
 
-From your terminal:
+## Key Features
 
-```sh
-npm run dev
-```
-
-This starts your app in development mode, rebuilding assets on file changes.
-
-## Deployment
-
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `remix build`
-
-- `build/`
-- `public/build/`
+- **Remix Framework**: Utilizing the modern capabilities of Remix for server-side rendering and efficient data handling.
+- **Google Sheets Integration**: Directly interfaces with Google Sheets, allowing for real-time data access and manipulation.
+- **Contact Management**: Facilitates the management of clients and contractors stored in the Google Sheets database.

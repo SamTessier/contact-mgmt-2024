@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { calculateMonthlyRate, countWeekdaysInMonth, rates } from '@/lib/utils';
 import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {

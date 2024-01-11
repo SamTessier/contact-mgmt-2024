@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import '../tailwind.css';
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { authorize, getData } from "./sheets.server";
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { accountingColumns } from "./columns";
+import '../tailwind.css'
 
 
 export interface StaffMember {
@@ -87,9 +89,8 @@ export default function Index() {
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1 className="text-4xl font-bold text-center p-4 uppercase">
-        School App
-      </h1>
+    <h1 className="text-4xl font-bold text-center p-4 uppercase">School App</h1>
+    
       <Input
         type="text"
         placeholder="Search..."
@@ -98,7 +99,7 @@ export default function Index() {
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">Filter by School</Button>
+          <Button variant="outline">Filter by School DROPDOWN</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => setSelectedSchool("all")}>
@@ -115,10 +116,10 @@ export default function Index() {
         </DropdownMenuContent>
       </DropdownMenu>
       <Tabs defaultValue="students" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="students">Students</TabsTrigger>
-          <TabsTrigger value="staff">Staff</TabsTrigger>
-          <TabsTrigger value="accounting">Accounting</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 gap-4">
+          <TabsTrigger value="students" className="tab-style">Students</TabsTrigger>
+          <TabsTrigger value="staff" className="tab-style">Staff</TabsTrigger>
+          <TabsTrigger value="accounting" className="tab-style">Accounting</TabsTrigger>
         </TabsList>
 
         <TabsContent value="students">
