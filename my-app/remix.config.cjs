@@ -2,6 +2,8 @@
 module.exports = {
   tailwind: true,
   ignoredRouteFiles: ["**/.*"],
+  tailwind: true,
+  postcss: true,
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
   // publicPath: "/build/",

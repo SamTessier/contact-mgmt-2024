@@ -88,6 +88,7 @@ export default function Index() {
   console.log("Students Data:", students);
 
   return (
+    <div className="container">
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
     <h1 className="text-4xl font-bold text-center p-4 uppercase">School App</h1>
     
@@ -121,9 +122,10 @@ export default function Index() {
           <TabsTrigger value="staff" className="tab-style">Staff</TabsTrigger>
           <TabsTrigger value="accounting" className="tab-style">Accounting</TabsTrigger>
         </TabsList>
-
+        <div className="relative w-full overflow-x-auto overflow-y-auto max-h-[500px]">
         <TabsContent value="students">
           <h2 className="text-2xl font-bold mb-4">Students</h2>
+          
           <DataTable columns={studentColumns} data={filteredStudents} />
         </TabsContent>
 
@@ -136,7 +138,9 @@ export default function Index() {
           <h2 className="text-2xl font-bold mb-4">Accounting</h2>
           <DataTable columns={accountingColumns} data={filteredStudents} />
         </TabsContent>
+        </div>
       </Tabs>
+    </div>
     </div>
   );
 }

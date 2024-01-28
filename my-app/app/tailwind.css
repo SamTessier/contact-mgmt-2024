@@ -6,37 +6,48 @@
   :root {
     --background: 255 100% 100%; /* White background */
     --foreground: 0 0% 0%; /* Black text */
-
     --card: 250 100% 98%; /* Very light gray for cards */
     --card-foreground: 0 0% 0%; /* Black text on cards */
-
     --popover: 250 100% 98%; /* Very light gray for popovers */
     --popover-foreground: 0 0% 0%; /* Black text on popovers */
-
     --primary: 207 90% 54%; /* A soft blue for primary elements */
     --primary-foreground: 255 100% 100%; /* White text on primary elements */
-
     --secondary: 40 100% 50%; /* A soft green for secondary elements */
     --secondary-foreground: 255 100% 100%; /* White text on secondary elements */
-
     --muted: 0 0% 60%; /* Muted gray */
     --muted-foreground: 255 100% 100%; /* White text on muted elements */
-
     --accent: 14 100% 50%; /* Bright orange for accents */
     --accent-foreground: 0 0% 0%; /* Black text on accent elements */
-
     --destructive: 0 100% 50%; /* Red for destructive actions */
     --destructive-foreground: 255 100% 100%; /* White text on destructive elements */
-
     --border: 0 0% 80%; /* Light gray for borders */
     --input: 0 0% 100%; /* White for input fields */
     --ring: 207 90% 54%; /* Soft blue for focus rings */
-
     --radius: 0.5rem; /* Border radius */
   }
-  
-  .dark {
-    /* Define dark theme variables here if needed */
+
+  body {
+    @apply bg-gray-50 text-gray-800;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans;
+  }
+
+  h1 {
+    @apply text-4xl font-extrabold text-gray-900;
+  }
+
+  h2 {
+    @apply text-3xl font-bold text-gray-800;
+  }
+
+  h3 {
+    @apply text-2xl font-semibold text-gray-700;
+  }
+
+  .container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 }
 
