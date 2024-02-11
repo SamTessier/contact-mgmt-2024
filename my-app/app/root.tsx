@@ -7,11 +7,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-
+import { SelectedMonthProvider } from "context/selectedMonthContext";
 import styles from "../dist/output.css";
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: styles },
-];
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
 export default function App() {
   return (
@@ -23,7 +21,9 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <SelectedMonthProvider>
+          <Outlet />
+        </SelectedMonthProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

@@ -68,6 +68,10 @@
     background-color: #e2e8f0; /* Light blue */
   }
 
+  .dropdown-menu-item {
+    @apply cursor-pointer bg-white text-gray-800 hover:bg-gray-100;
+  }
+  
   .data-table {
     border-collapse: collapse;
     width: 100%;
@@ -77,4 +81,36 @@
     border: 1px solid #ddd; /* Light gray border */
     padding: 8px;
   }
+
+  .responsive-table-cell {
+    @apply px-2 py-1 text-sm;
+  }
+
+  .table-text {
+    @apply text-sm font-normal text-gray-700;
+  }
+
+  .table-head-text {
+    @apply text-base font-semibold text-gray-800;
+  }
+
+  .table-cell {
+    @apply px-4 py-2 border-b border-gray-200;
+  }
+
+  .table-row {
+    @apply transition-colors hover:bg-gray-50;
+  }
+
+  .table-row-selected {
+    @apply bg-gray-100;
+  }
+
+  @media (min-width: 768px) {
+    .responsive-table-cell {
+      @apply px-4 py-2 text-base;
+    }
+  }
 }
+
+
