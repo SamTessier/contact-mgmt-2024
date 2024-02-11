@@ -39,36 +39,34 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   });
 
   return (
-    <div className="rounded-md border">
-      <Table>
+    <div className="rounded-md border shadow overflow-hidden"> {/* Add shadow and overflow handling */}
+      <Table className="min-w-full divide-y divide-gray-200"> {/* Add full width and division */}
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+            <TableRow key={headerGroup.id} className="bg-gray-50"> {/* Styling for header row */}
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" // Added styling for header cells
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  <span>
                     {header.column.getIsSorted() 
-                      ? (header.column.getIsSorted() === 'desc' ? 'z-a' : 'a-z')
+                      ? (header.column.getIsSorted() === 'desc' ? ' ↓' : ' ↑') // Replace with icons or styled indicators
                       : ''}
-                  </TableHead>
-                );
-              })}
+                  </span>
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
+        <TableBody className="bg-white divide-y divide-gray-200"> {/* Add division and background */}
           {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow key={row.id} className="hover:bg-gray-50"> {/* Hover effect */}
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> {/* Padding and text styling */}
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -76,7 +74,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length} className="h-24 text-center text-sm text-gray-500">
                 No results.
               </TableCell>
             </TableRow>
@@ -86,3 +84,4 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     </div>
   );
 }
+

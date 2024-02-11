@@ -72,15 +72,21 @@
     @apply cursor-pointer bg-white text-gray-800 hover:bg-gray-100;
   }
   
-  .data-table {
-    border-collapse: collapse;
-    width: 100%;
+  .data-table th, .data-table td {
+    @apply border-gray-300 shadow-sm; /* Enhanced borders and subtle shadow */
+    padding: 12px; /* Increased padding */
+    text-align: left;
+    vertical-align: middle;
   }
 
-  .data-table th, .data-table td {
-    border: 1px solid #ddd; /* Light gray border */
-    padding: 8px;
+  .data-table th {
+    @apply sticky top-0 bg-white z-10; /* Fixed header */
   }
+
+  .data-table tr:hover {
+    @apply bg-gray-50; /* Row hover effect */
+  }
+
 
   .responsive-table-cell {
     @apply px-2 py-1 text-sm;
