@@ -14,7 +14,7 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
     enableSorting: true,
     cell: info => (
       <div onClick={() => handleProfileClick(info.row.original)} className="cursor-pointer text-blue-600 hover:text-blue-800">
-        {info.getValue()}
+        {info.getValue() as ReactNode}
       </div>
     ),
   },
@@ -85,17 +85,18 @@ export const getStaffColumns = (handleProfileClick: (profile: Student | StaffMem
 ];
 
 export const getAccountingColumns = (handleProfileClick: (profile: Student | StaffMember) => void, selectedMonth: number): ColumnDef<Student | StaffMember>[] => [
-  ...getStudentColumns(handleProfileClick),
+  ...getStudentColumns(handleProfileClick).map(column => ({
+    ...column,
+  })),
+  // 
   {
+    id: 'billing', 
     accessorKey: 'billing',
     header: 'Billing',
-    cell: (info) => {
+    cell: info => {
       const year = new Date().getFullYear();
       const weekdayCounts = countWeekdaysInMonth(year, selectedMonth + 1); 
-      const rate = calculateMonthlyRate(
-        info.row.original.weeklySchedule,
-        weekdayCounts
-      );
+      const rate = calculateMonthlyRate(info.row.original.weeklySchedule, weekdayCounts);
       return `$${rate.toFixed(2)}`;
     },
   },

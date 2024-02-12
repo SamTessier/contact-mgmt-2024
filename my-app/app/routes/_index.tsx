@@ -107,27 +107,10 @@ export default function Index() {
     return Array.from(schoolSet);
   }
 
-  const getAccountingColumns = (selectedMonth) => {
-    return [
-      getStudentColumns(handleProfileClick),
-      {
-        accessorKey: "billing",
-        header: "Billing",
-        cell: (info) => {
-          const year = new Date().getFullYear(); 
-          const weekdayCounts = countWeekdaysInMonth(year, selectedMonth + 1);
-          const rate = calculateMonthlyRate(
-            info.row.original.weeklySchedule,
-            weekdayCounts
-          );
-          return `$${rate.toFixed(2)}`;
-        },
-      },
-    ];
-  };
   const studentColumnsWithClick = getStudentColumns(handleProfileClick);
   const staffColumnsWithClick = getStaffColumns(handleProfileClick);
-  const accountingColumnsWithClick = getAccountingColumns(handleProfileClick);
+  const accountingColumnsWithClick = getAccountingColumns(handleProfileClick, selectedMonth);
+
 
   console.log("Staff Data:", staff);
   console.log("Students Data:", students);
@@ -191,6 +174,11 @@ export default function Index() {
 
             <TabsContent value="staff">
               <h2 className="text-2xl font-bold mb-4">Staff</h2>
+              <ProfileViewModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                profile={selectedProfile}
+              />
               <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
             </TabsContent>
 
@@ -211,6 +199,11 @@ export default function Index() {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+              <ProfileViewModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                profile={selectedProfile}
+              />
               <DataTable
                 columns={accountingColumnsWithClick}
                 data={filteredStudents}
