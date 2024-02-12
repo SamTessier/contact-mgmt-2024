@@ -7,7 +7,11 @@ import { useSelectedMonth } from "context/selectedMonthContext";
 import { countWeekdaysInMonth, calculateMonthlyRate, rates } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "../../@/components/ui/data-table";
-import { studentColumns, staffColumns } from "./columns";
+import {
+  getStudentColumns,
+  getStaffColumns,
+  getAccountingColumns,
+} from "./columns";
 import { Input } from "../../@/components/ui/input";
 import {
   DropdownMenu,
@@ -16,7 +20,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { accountingColumns } from "./columns";
+import { ProfileViewModal } from "@/components/profile-view-modal";
 import "../tailwind.css";
 
 export interface StaffMember {
@@ -60,6 +64,15 @@ export const loader: LoaderFunction = async (): Promise<Data> => {
 export default function Index() {
   const { staff, students } = useLoaderData<Data>();
   const [searchText, setSearchText] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<
+    Student | StaffMember | null
+  >(null);
+  const handleProfileClick = (profile: Student | StaffMember) => {
+    setSelectedProfile(profile);
+    setIsModalOpen(true);
+  };
+
   const [selectedSchool, setSelectedSchool] = useState("all");
   const filteredStaff = staff.filter(
     (member: StaffMember) =>
@@ -96,13 +109,13 @@ export default function Index() {
 
   const getAccountingColumns = (selectedMonth) => {
     return [
-      ...studentColumns,
+      getStudentColumns(handleProfileClick),
       {
         accessorKey: "billing",
         header: "Billing",
         cell: (info) => {
-          const year = new Date().getFullYear(); // Adjust as needed
-          const weekdayCounts = countWeekdaysInMonth(year, selectedMonth + 1); // Adjust for 0-indexed months
+          const year = new Date().getFullYear(); 
+          const weekdayCounts = countWeekdaysInMonth(year, selectedMonth + 1);
           const rate = calculateMonthlyRate(
             info.row.original.weeklySchedule,
             weekdayCounts
@@ -112,6 +125,9 @@ export default function Index() {
       },
     ];
   };
+  const studentColumnsWithClick = getStudentColumns(handleProfileClick);
+  const staffColumnsWithClick = getStaffColumns(handleProfileClick);
+  const accountingColumnsWithClick = getAccountingColumns(handleProfileClick);
 
   console.log("Staff Data:", staff);
   console.log("Students Data:", students);
@@ -162,13 +178,20 @@ export default function Index() {
           <div className="relative w-full overflow-x-auto overflow-y-auto max-h-[500px]">
             <TabsContent value="students">
               <h2 className="text-2xl font-bold mb-4">Students</h2>
-
-              <DataTable columns={studentColumns} data={filteredStudents} />
+              <ProfileViewModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                profile={selectedProfile}
+              />
+              <DataTable
+                columns={studentColumnsWithClick}
+                data={filteredStudents}
+              />
             </TabsContent>
 
             <TabsContent value="staff">
               <h2 className="text-2xl font-bold mb-4">Staff</h2>
-              <DataTable columns={staffColumns} data={filteredStaff} />
+              <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
             </TabsContent>
 
             <TabsContent value="accounting">
@@ -189,7 +212,7 @@ export default function Index() {
                 </DropdownMenuContent>
               </DropdownMenu>
               <DataTable
-                columns={getAccountingColumns(selectedMonth)}
+                columns={accountingColumnsWithClick}
                 data={filteredStudents}
               />
             </TabsContent>

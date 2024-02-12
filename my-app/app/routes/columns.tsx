@@ -1,9 +1,8 @@
-// columns.tsx
-import { ColumnDef, CellContext } from "@tanstack/react-table";
-import type { Student, StaffMember } from "./_index";
-import { calculateMonthlyRate, countWeekdaysInMonth, rates } from '@/lib/utils';
+import { ColumnDef } from "@tanstack/react-table";
+import type { Student, StaffMember } from "./_index"; 
+import { calculateMonthlyRate, countWeekdaysInMonth } from '@/lib/utils';
 
-export const studentColumns: ColumnDef<Student>[] = [
+export const getStudentColumns = (handleProfileClick: (profile: Student | StaffMember) => void): ColumnDef<Student | StaffMember>[] => [
   {
     accessorKey: "school",
     header: "School",
@@ -13,6 +12,11 @@ export const studentColumns: ColumnDef<Student>[] = [
     accessorKey: "studentName",
     header: "Student Name",
     enableSorting: true,
+    cell: info => (
+      <div onClick={() => handleProfileClick(info.row.original)} className="cursor-pointer text-blue-600 hover:text-blue-800">
+        {info.getValue()}
+      </div>
+    ),
   },
   {
     accessorKey: "weeklySchedule",
@@ -46,17 +50,18 @@ export const studentColumns: ColumnDef<Student>[] = [
   },
 ];
 
-export const staffColumns: ColumnDef<StaffMember>[] = [
+export const getStaffColumns = (handleProfileClick: (profile: Student | StaffMember) => void): ColumnDef<Student | StaffMember>[] => [
   {
     accessorKey: "firstName",
     header: "First Name",
     enableSorting: true,
+    cell: info => (
+      <div onClick={() => handleProfileClick(info.row.original)} className="cursor-pointer text-blue-600 hover:text-blue-800">
+        {`${info.row.original.firstName} ${info.row.original.lastName}`}
+      </div>
+    ),
   },
-  {
-    accessorKey: "lastName",
-    header: "Last Name",
-    enableSorting: true,
-  },
+ 
   {
     accessorKey: "school",
     header: "School",
@@ -75,19 +80,23 @@ export const staffColumns: ColumnDef<StaffMember>[] = [
   {
     accessorKey: "availability",
     header: "Availability",
-    
+    enableSorting: true,
   },
 ];
 
-export const accountingColumns: ColumnDef<Student>[] = [
-  ...studentColumns,
+export const getAccountingColumns = (handleProfileClick: (profile: Student | StaffMember) => void, selectedMonth: number): ColumnDef<Student | StaffMember>[] => [
+  ...getStudentColumns(handleProfileClick),
   {
     accessorKey: 'billing',
     header: 'Billing',
-    cell: (info: CellContext<Student, unknown>) => {
-      const weekdayCounts = countWeekdaysInMonth(2024, 1); 
-      const rate = calculateMonthlyRate(info.row.original.weeklySchedule, weekdayCounts);
+    cell: (info) => {
+      const year = new Date().getFullYear();
+      const weekdayCounts = countWeekdaysInMonth(year, selectedMonth + 1); 
+      const rate = calculateMonthlyRate(
+        info.row.original.weeklySchedule,
+        weekdayCounts
+      );
       return `$${rate.toFixed(2)}`;
-    }
+    },
   },
 ];
