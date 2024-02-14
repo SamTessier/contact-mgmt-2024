@@ -4,11 +4,6 @@ import { calculateMonthlyRate, countWeekdaysInMonth } from '@/lib/utils';
 
 export const getStudentColumns = (handleProfileClick: (profile: Student | StaffMember) => void): ColumnDef<Student | StaffMember>[] => [
   {
-    accessorKey: "school",
-    header: "School",
-    enableSorting: true,
-  },
-  {
     accessorKey: "studentName",
     header: "Student Name",
     enableSorting: true,
@@ -19,18 +14,13 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
     ),
   },
   {
+    accessorKey: "school",
+    header: "School",
+    enableSorting: true,
+  },
+  {
     accessorKey: "weeklySchedule",
     header: "Weekly Schedule",
-    enableSorting: true,
-  },
-  {
-    accessorKey: "notes",
-    header: "Notes",
-    enableSorting: true,
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
     enableSorting: true,
   },
   {
@@ -39,15 +29,11 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
     enableSorting: true,
   },
   {
-    accessorKey: "parentOne",
-    header: "Parent 1",
+    accessorKey: "email",
+    header: "Email",
     enableSorting: true,
   },
-  {
-    accessorKey: "parentTwo",
-    header: "Parent 2",
-    enableSorting: true,
-  },
+
 ];
 
 export const getStaffColumns = (handleProfileClick: (profile: Student | StaffMember) => void): ColumnDef<Student | StaffMember>[] => [
