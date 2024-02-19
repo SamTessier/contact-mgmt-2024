@@ -109,8 +109,10 @@ export default function Index() {
 
   const studentColumnsWithClick = getStudentColumns(handleProfileClick);
   const staffColumnsWithClick = getStaffColumns(handleProfileClick);
-  const accountingColumnsWithClick = getAccountingColumns(handleProfileClick, selectedMonth);
-
+  const accountingColumnsWithClick = getAccountingColumns(
+    handleProfileClick,
+    selectedMonth
+  );
 
   console.log("Staff Data:", staff);
   console.log("Students Data:", students);
@@ -133,11 +135,14 @@ export default function Index() {
             <Button variant="outline">Filter by School DROPDOWN</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setSelectedSchool("all")}>
+            <DropdownMenuItem 
+            className="dropdown-menu-item"
+            onClick={() => setSelectedSchool("all")}>
               All
             </DropdownMenuItem>
             {getUniqueSchools(staff, students).map((school: string) => (
               <DropdownMenuItem
+                className="dropdown-menu-item"
                 key={school}
                 onClick={() => setSelectedSchool(school)}
               >
