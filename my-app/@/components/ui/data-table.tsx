@@ -43,12 +43,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       <Table className="min-w-full divide-y divide-gray-200"> {/* Add full width and division */}
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-gray-50"> {/* Styling for header row */}
+            <TableRow key={headerGroup.id} className="data-table-th"> {/* Styling for header row */}
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" // Added styling for header cells
+                   // Added styling for header cells
                 >
                   {flexRender(header.column.columnDef.header, header.getContext())}
                   <span>

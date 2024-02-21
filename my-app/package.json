@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev --manual",
+    "d": "remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
-    "build-css": "postcss app/tailwind.css -o dist/output.css",
+    "b": "postcss app/tailwind.css -o dist/output.css",
     "watch-css": "tailwindcss -i ./app/tailwind.css -o ./dist/tailwind.css --minify --watch"
   },
   "dependencies": {

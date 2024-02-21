@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 255 100% 100%; /* White background */
+    --background: 0 0% 100%; /* White background */
     --foreground: 0 0% 0%; /* Black text */
     --card: 250 100% 98%; /* Very light gray for cards */
     --card-foreground: 0 0% 0%; /* Black text on cards */
@@ -27,7 +27,7 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-800;
+    @apply bg-slate-200 text-gray-800;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -72,18 +72,22 @@
     @apply cursor-pointer bg-white text-gray-800 hover:bg-gray-100;
   }
   
-  .data-table th, .data-table td {
-    @apply border-gray-300 shadow-sm; /* Enhanced borders and subtle shadow */
-    padding: 12px; /* Increased padding */
+  .data-table {
+    @apply border-gray-300 shadow-lg relative w-full overflow-x-auto overflow-y-auto;
+    background-color: #ffffff; /* Corrected color code */
+    padding: 32px;
     text-align: left;
     vertical-align: middle;
+    max-height: 500px; /* CSS equivalent of max-h-[500px] */
   }
-
-  .data-table th {
-    @apply sticky top-0 bg-white z-10; /* Fixed header */
+  
+  .data-table-th {
+    @apply sticky top-0 bg-white z-10 px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer;
+    background-color: #ffffff; /* This is redundant due to bg-white, so you can remove it */
   }
+  
 
-  .data-table tr:hover {
+  .data-table-tr:hover {
     @apply bg-gray-50; /* Row hover effect */
   }
 

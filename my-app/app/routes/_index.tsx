@@ -135,9 +135,10 @@ export default function Index() {
             <Button variant="outline">Filter by School DROPDOWN</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem 
-            className="dropdown-menu-item"
-            onClick={() => setSelectedSchool("all")}>
+            <DropdownMenuItem
+              className="dropdown-menu-item"
+              onClick={() => setSelectedSchool("all")}
+            >
               All
             </DropdownMenuItem>
             {getUniqueSchools(staff, students).map((school: string) => (
@@ -163,58 +164,63 @@ export default function Index() {
               Accounting
             </TabsTrigger>
           </TabsList>
-          <div className="relative w-full overflow-x-auto overflow-y-auto max-h-[500px]">
-            <TabsContent value="students">
-              <h2 className="text-2xl font-bold mb-4">Students</h2>
-              <ProfileViewModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                profile={selectedProfile}
-              />
+
+          <TabsContent value="students">
+            <h2 className="text-2xl font-bold mb-4">Students</h2>
+            <ProfileViewModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              profile={selectedProfile}
+            />
+            <div className="data-table">
               <DataTable
                 columns={studentColumnsWithClick}
                 data={filteredStudents}
               />
-            </TabsContent>
+            </div>
+          </TabsContent>
 
-            <TabsContent value="staff">
-              <h2 className="text-2xl font-bold mb-4">Staff</h2>
-              <ProfileViewModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                profile={selectedProfile}
-              />
+          <TabsContent value="staff">
+            <h2 className="text-2xl font-bold mb-4">Staff</h2>
+            <ProfileViewModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              profile={selectedProfile}
+            />
+            <div className="data-table">
               <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
-            </TabsContent>
+            </div>
+          </TabsContent>
 
-            <TabsContent value="accounting">
-              <h2 className="text-2xl font-bold mb-4">Accounting</h2>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">{monthNames[selectedMonth]}</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {months.map((month) => (
-                    <DropdownMenuItem
-                      className="dropdown-menu-item"
-                      onClick={() => setSelectedMonth(month.value)}
-                    >
-                      {month.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <ProfileViewModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                profile={selectedProfile}
-              />
+          <TabsContent value="accounting">
+            <h2 className="text-2xl font-bold mb-4">Accounting</h2>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">{monthNames[selectedMonth]}</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {months.map((month) => (
+                  <DropdownMenuItem
+                    className="dropdown-menu-item"
+                    onClick={() => setSelectedMonth(month.value)}
+                  >
+                    {month.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <ProfileViewModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              profile={selectedProfile}
+            />
+            <div className="data-table">
               <DataTable
                 columns={accountingColumnsWithClick}
                 data={filteredStudents}
               />
-            </TabsContent>
-          </div>
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
