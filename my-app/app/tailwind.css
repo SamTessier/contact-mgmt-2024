@@ -53,6 +53,7 @@
 
 @layer components {
   .tab-style {
+    @apply border-gray-300 shadow-lg;
     background-color: #f3f4f6; /* Light gray */
     text-align: center;
     padding: 8px 16px;
@@ -73,17 +74,16 @@
   }
   
   .data-table {
-    @apply border-gray-300 shadow-lg relative w-full overflow-x-auto overflow-y-auto;
-    background-color: #ffffff; /* Corrected color code */
+    @apply border-gray-300 shadow-lg relative w-full overflow-x-auto overflow-y-auto rounded-md;
+    background-color: white; 
     padding: 32px;
     text-align: left;
     vertical-align: middle;
-    max-height: 500px; /* CSS equivalent of max-h-[500px] */
+    max-height: 500px; 
   }
   
   .data-table-th {
     @apply sticky top-0 bg-white z-10 px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer;
-    background-color: #ffffff; /* This is redundant due to bg-white, so you can remove it */
   }
   
 

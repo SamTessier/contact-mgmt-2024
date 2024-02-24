@@ -120,11 +120,12 @@ export default function Index() {
   return (
     <div className="container">
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-        <h1 className="text-4xl font-bold text-center p-4 uppercase">
+        <h1 className="text-4xl font-bold p-8 uppercase">
           School App
         </h1>
 
         <Input
+          className="border-gray-300 shadow-lg px-4 py-2 justify-center rounded-md"          
           type="text"
           placeholder="Search..."
           value={searchText}

@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   });
 
   return (
-    <div className="rounded-md border shadow overflow-hidden"> {/* Add shadow and overflow handling */}
+    <div> {/* Add shadow and overflow handling */}
       <Table className="min-w-full divide-y divide-gray-200"> {/* Add full width and division */}
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
