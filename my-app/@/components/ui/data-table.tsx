@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
   getSortedRowModel,
-  SortingState
+  SortingState,
 } from "@tanstack/react-table";
 
 import {
@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { calculateMonthlyRate, countWeekdaysInMonth, rates } from '@/lib/utils';
+import { calculateMonthlyRate, countWeekdaysInMonth, rates } from "@/lib/utils";
 import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
@@ -25,8 +25,11 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]); 
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
     data,
     columns,
@@ -39,34 +42,46 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   });
 
   return (
-    <div> {/* Add shadow and overflow handling */}
-      <Table className="min-w-full divide-y divide-gray-200"> {/* Add full width and division */}
-        <TableHeader>
+    <div>
+      <Table className="min-w-full divide-y divide-gray-200">
+        <TableHeader className="sticky top-0 z-10 bg-white">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="data-table-th"> {/* Styling for header row */}
+            <TableRow key={headerGroup.id} className="data-table-th">
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
-                   // Added styling for header cells
                 >
-                  {flexRender(header.column.columnDef.header, header.getContext())}
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
                   <span>
-                    {header.column.getIsSorted() 
-                      ? (header.column.getIsSorted() === 'desc' ? ' ↓' : ' ↑') // Replace with icons or styled indicators
-                      : ''}
+                    {header.column.getIsSorted()
+                      ? header.column.getIsSorted() === "desc"
+                        ? " ↓"
+                        : " ↑" // Replace with icons or styled indicators
+                      : ""}
                   </span>
                 </TableHead>
               ))}
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody className="bg-white divide-y divide-gray-200"> {/* Add division and background */}
+        <div className="data-table">
+        <TableBody className="data-table">
           {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} className="hover:bg-gray-50"> {/* Hover effect */}
+              <TableRow key={row.id} className="hover:bg-gray-50">
+                {" "}
+                {/* Hover effect */}
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"> {/* Padding and text styling */}
+                  <TableCell
+                    key={cell.id}
+                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                  >
+                    {" "}
+                    {/* Padding and text styling */}
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -74,14 +89,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center text-sm text-gray-500">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center text-sm text-gray-500"
+              >
                 No results.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
+        </div>
       </Table>
     </div>
   );
 }
-

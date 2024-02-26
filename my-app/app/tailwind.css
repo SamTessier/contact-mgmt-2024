@@ -74,14 +74,24 @@
   }
   
   .data-table {
-    @apply border-gray-300 shadow-lg relative w-full overflow-x-auto overflow-y-auto rounded-md;
+    @apply w-full overflow-x-auto overflow-y-auto;
     background-color: white; 
     padding: 32px;
     text-align: left;
     vertical-align: middle;
     max-height: 500px; 
   }
-  
+
+  .data-table-container {
+    @apply w-full overflow-x-hidden overflow-y-hidden;
+    background-color: white; 
+    padding: 32px;
+    text-align: left;
+    vertical-align: middle;
+    max-height: 500px; 
+  }
+
+
   .data-table-th {
     @apply sticky top-0 bg-white z-10 px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer;
   }
