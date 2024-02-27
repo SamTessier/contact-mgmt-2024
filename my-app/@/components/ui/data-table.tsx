@@ -20,6 +20,8 @@ import {
 import { calculateMonthlyRate, countWeekdaysInMonth, rates } from "@/lib/utils";
 import { useState } from "react";
 
+
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -42,7 +44,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="data-table-container">
       <Table className="min-w-full divide-y divide-gray-200">
         <TableHeader className="sticky top-0 z-10 bg-white">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -68,7 +70,6 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <div className="data-table">
         <TableBody className="data-table">
           {table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
@@ -98,7 +99,6 @@ export function DataTable<TData, TValue>({
             </TableRow>
           )}
         </TableBody>
-        </div>
       </Table>
     </div>
   );

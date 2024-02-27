@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ProfileViewModal } from "@/components/profile-view-modal";
-import "../tailwind.css";
 
 export interface StaffMember {
   firstName: string;
@@ -171,12 +170,12 @@ export default function Index() {
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
             />
-            <div className="data-table-container">
+
               <DataTable
                 columns={studentColumnsWithClick}
                 data={filteredStudents}
               />
-            </div>
+         
           </TabsContent>
 
           <TabsContent value="staff">
@@ -186,9 +185,9 @@ export default function Index() {
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
             />
-            <div className="data-table-container">
+
               <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
-            </div>
+    
           </TabsContent>
 
           <TabsContent value="accounting">
@@ -213,12 +212,12 @@ export default function Index() {
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
             />
-            <div className="data-table-container">
+
               <DataTable
                 columns={accountingColumnsWithClick}
                 data={filteredStudents}
               />
-            </div>
+          
           </TabsContent>
         </Tabs>
       </div>
