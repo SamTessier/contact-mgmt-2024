@@ -62,38 +62,40 @@
   }
 
   .tab-style.active {
-    background-color: #e5e7eb; /* Slightly darker gray */
+    background-color: #e5e7eb; 
   }
 
   .tab-style:hover {
-    background-color: #e2e8f0; /* Light blue */
+    background-color: #e2e8f0;
   }
 
   .dropdown-menu-item {
     @apply cursor-pointer bg-white text-gray-800 hover:bg-gray-100;
   }
   
-  .data-table {
-    @apply w-full overflow-x-auto overflow-y-auto;
-    background-color: white; 
-    padding: 32px;
-    text-align: left;
-    vertical-align: middle;
-    max-height: 400px; 
-  }
-
   .data-table-container {
-    @apply w-full overflow-x-hidden overflow-y-hidden;
+    @apply w-full rounded-md shadow-lg;
     background-color: white; 
     padding: 32px;
     text-align: left;
     vertical-align: middle;
     max-height: 500px; 
   }
-
+ 
+  .data-table-body {
+    @apply overflow-y-scroll divide-y divide-gray-200;
+    background-color: white; 
+    padding: 32px;
+    text-align: left;
+    vertical-align: middle;
+    max-height: 400px; 
+  }
+  
 
   .data-table-th {
-    @apply sticky top-0 bg-white z-10 px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer;
+    @apply w-full sticky top-0 bg-white px-8 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer divide-y;
+    text-align: left;
+    vertical-align: middle;
   }
   
 

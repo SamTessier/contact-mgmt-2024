@@ -8,7 +8,7 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
     header: "Student Name",
     enableSorting: true,
     cell: info => (
-      <div onClick={() => handleProfileClick(info.row.original)} className="cursor-pointer text-blue-600 hover:text-blue-800">
+      <div onClick={() => handleProfileClick(info.row.original)} className="cursor-pointer hover:text-blue-800">
         {info.getValue() as ReactNode}
       </div>
     ),
