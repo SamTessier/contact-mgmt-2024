@@ -69,6 +69,23 @@
     background-color: #e2e8f0;
   }
 
+  .button-style {
+    @apply border-gray-300 shadow-sm;
+    background-color: #f3f4f6; 
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+
+  .button-style.active {
+    background-color: #e5e7eb; 
+  }
+
+  .button-style:hover {
+    background-color: #e2e8f0;
+  }
+
   .dropdown-menu-item {
     @apply cursor-pointer bg-white text-gray-800 hover:bg-gray-100;
   }
