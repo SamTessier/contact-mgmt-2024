@@ -192,7 +192,7 @@ export default function Index() {
 
           <TabsContent value="accounting">
             <h2 className="text-2xl font-bold mb-4">Accounting</h2>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}> 
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button className="button-style" variant="outline">{monthNames[selectedMonth]}</Button>
@@ -208,7 +208,6 @@ export default function Index() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            </div>
             <ProfileViewModal
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}

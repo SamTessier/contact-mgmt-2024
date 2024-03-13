@@ -44,33 +44,30 @@ export function DataTable<TData, TValue>({
   return (
     <div className="data-table-container">
       <Table>
-        <span className="data-table-th">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className="data-table-th"
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                    <span>
-                      {header.column.getIsSorted()
-                        ? header.column.getIsSorted() === "desc"
-                          ? " ↓"
-                          : " ↑" 
-                        : ""}
-                    </span>
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-        </span>
+        <div className="data-table-th">
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+              <TableHead
+              key={header.id}
+              onClick={header.column.getToggleSortingHandler()}
+              className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+            >
+              {header.column.columnDef.header}
+              <span>
+                {header.column.getIsSorted()
+                  ? header.column.getIsSorted() === "desc"
+                    ? " ↓"
+                    : " ↑"
+                  : ""}
+              </span>
+            </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        </div>
         <div className="data-table-body">
           <TableBody>
             {table.getRowModel().rows.length > 0 ? (

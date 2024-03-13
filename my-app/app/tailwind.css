@@ -94,7 +94,6 @@
     @apply w-full rounded-md shadow-lg;
     background-color: white; 
     padding: 32px;
-    text-align: left;
     vertical-align: middle;
     max-height: 500px; 
   }
@@ -109,11 +108,7 @@
   }
   
 
-  .data-table-th {
-    @apply w-full sticky top-0 bg-white px-8 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer divide-y;
-    text-align: left;
-    vertical-align: middle;
-  }
+
   
 
   .data-table-tr:hover {
@@ -148,6 +143,12 @@
   @media (min-width: 768px) {
     .responsive-table-cell {
       @apply px-4 py-2 text-base;
+    }
+    .data-table-th {
+      @apply w-full sticky top-0 bg-white z-10 justify-evenly;
+      vertical-align: middle;
+      
+  
     }
   }
 }
