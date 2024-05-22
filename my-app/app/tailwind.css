@@ -52,6 +52,15 @@
 }
 
 @layer components {
+  .fixed-width {
+    @apply w-32; /* Adjust the width as needed */
+    max-width: 100px; /* Maximum width */
+  }
+
+  .truncate {
+    @apply overflow-hidden whitespace-nowrap text-ellipsis;
+  }
+
   .tab-style {
     @apply border-gray-300 shadow-lg;
     background-color: #f3f4f6; /* Light gray */
@@ -97,60 +106,33 @@
     vertical-align: middle;
     max-height: 500px; 
   }
- 
-  .data-table-body {
-    @apply overflow-y-scroll divide-y divide-gray-200;
-    background-color: white; 
-    padding: 32px;
-    text-align: left;
-    vertical-align: middle;
-    max-height: 400px; 
-  }
-  
 
-
-  
-
-  .data-table-tr:hover {
-    @apply bg-gray-50; /* Row hover effect */
+  .table-wrapper {
+    @apply flex flex-col max-h-[500px];
   }
 
-
-  .responsive-table-cell {
-    @apply px-2 py-1 text-sm;
+  .table-header {
+    @apply sticky top-0 z-10 bg-white;
   }
 
-  .table-text {
-    @apply text-sm font-normal text-gray-700;
+  .table-body {
+    @apply overflow-y-auto max-h-[400px];
   }
 
-  .table-head-text {
-    @apply text-base font-semibold text-gray-800;
+  .table {
+    @apply w-full border-collapse;
   }
 
-  .table-cell {
-    @apply px-4 py-2 border-b border-gray-200;
+  .table th,
+  .table td {
+    @apply px-6 py-3 text-left border-b border-gray-200;
+  }
+
+  .table th {
+    @apply bg-gray-50;
   }
 
   .table-row {
     @apply transition-colors hover:bg-gray-50;
   }
-
-  .table-row-selected {
-    @apply bg-gray-100;
-  }
-
-  @media (min-width: 768px) {
-    .responsive-table-cell {
-      @apply px-4 py-2 text-base;
-    }
-    .data-table-th {
-      @apply w-full sticky top-0 bg-white z-10 justify-evenly;
-      vertical-align: middle;
-      
-  
-    }
-  }
 }
-
-

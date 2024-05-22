@@ -1,28 +1,34 @@
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn(
-        "min-w-full divide-y divide-coolGray-200 overflow-hidden",
-        className
-      )}
-      {...props}
-    />
-  </div>
+  <table
+    ref={ref}
+    className={cn(
+      "min-w-full divide-y divide-coolGray-200 overflow-hidden",
+      className
+    )}
+    {...props}
+  />
 ));
 Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => <thead ref={ref} {...props} />);
+>(({ className, ...props }, ref) => (
+  <thead
+    ref={ref}
+    className={cn(
+      "max-w-full divide-y divide-coolGray-200 overflow-hidden justify-center",
+      className
+    )}
+    {...props}
+  />
+));
 TableHeader.displayName = "TableHeader";
 
 const TableBody = React.forwardRef<
@@ -71,7 +77,10 @@ const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
-  <th className={cn("table-text table-cell responsive-table-cell", className)} ref={ref} {...props} />
+  <th className={cn(
+    "divide-y divide-coolGray-200 overflow-hidden fixed-width truncate",
+    className
+  )} ref={ref} {...props} />
 ));
 TableHead.displayName = "TableHead";
 
@@ -81,7 +90,7 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("table-text table-cell responsive-table-cell", className)}
+    className={cn("table-text table-cell responsive-table-cell fixed-width truncate", className)}
     {...props}
   />
 ));

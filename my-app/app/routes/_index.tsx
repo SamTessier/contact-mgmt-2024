@@ -113,9 +113,6 @@ export default function Index() {
     selectedMonth
   );
 
-  console.log("Staff Data:", staff);
-  console.log("Students Data:", students);
-
   return (
     <div className="container">
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
@@ -130,7 +127,7 @@ export default function Index() {
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">Filter by School DROPDOWN</Button>
+            <Button variant="outline">Filter by School</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem
@@ -170,12 +167,10 @@ export default function Index() {
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
             />
-
-              <DataTable
-                columns={studentColumnsWithClick}
-                data={filteredStudents}
-              />
-         
+            <DataTable
+              columns={studentColumnsWithClick}
+              data={filteredStudents}
+            />
           </TabsContent>
 
           <TabsContent value="staff">
@@ -185,22 +180,22 @@ export default function Index() {
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
             />
-
-              <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
-    
+            <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
           </TabsContent>
 
           <TabsContent value="accounting">
             <h2 className="text-2xl font-bold mb-4">Accounting</h2>
-            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="button-style" variant="outline">{monthNames[selectedMonth]}</Button>
+                <Button className="button-style" variant="outline">
+                  {monthNames[selectedMonth]}
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 {months.map((month) => (
                   <DropdownMenuItem
                     className="dropdown-menu-item"
+                    key={month.value}
                     onClick={() => setSelectedMonth(month.value)}
                   >
                     {month.label}
@@ -213,12 +208,10 @@ export default function Index() {
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
             />
-
-              <DataTable
-                columns={accountingColumnsWithClick}
-                data={filteredStudents}
-              />
-          
+            <DataTable
+              columns={accountingColumnsWithClick}
+              data={filteredStudents}
+            />
           </TabsContent>
         </Tabs>
       </div>
