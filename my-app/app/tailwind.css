@@ -53,8 +53,8 @@
 
 @layer components {
   .fixed-width {
-    @apply w-32; /* Adjust the width as needed */
-    max-width: 100px; /* Maximum width */
+    @apply w-32; 
+    max-width: 100px; 
   }
 
   .truncate {
@@ -63,7 +63,7 @@
 
   .tab-style {
     @apply border-gray-300 shadow-lg;
-    background-color: #f3f4f6; /* Light gray */
+    background-color: #f3f4f6; 
     text-align: center;
     padding: 8px 16px;
     border-radius: 4px;

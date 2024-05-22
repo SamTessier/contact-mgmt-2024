@@ -7,38 +7,67 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { StaffMember, Student } from "app/routes/_index"; // Adjust the import path as necessary
+import { StaffMember, Student } from "app/routes/_index";
+import { CopyButton } from "@/components/ui/copybutton";
 
 interface ProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  profile: Student | StaffMember | null; 
+  profile: Student | StaffMember | null;
 }
 
-export const ProfileViewModal = ({ isOpen, onClose, profile }: ProfileProps) => {
+export const ProfileViewModal = ({
+  isOpen,
+  onClose,
+  profile,
+}: ProfileProps) => {
   if (!isOpen || !profile) return null;
 
-  // Determine if the profile is a Student or StaffMember
-  const isStudent = 'studentName' in profile;
+  const isStudent = "studentName" in profile;
+
+  const getModalContent = () => {
+    const email = `Email: ${profile.email}`;
+    const phone = `Phone: ${isStudent ? profile.phoneOne : profile.phone}`;
+    const school = `School: ${profile.school}`;
+    const availability = !isStudent
+      ? `Availability: ${profile.availability}`
+      : "";
+    const weeklySchedule = isStudent
+      ? `Weekly Schedule: ${profile.weeklySchedule}`
+      : "";
+    const notes = isStudent ? `Notes: ${profile.notes}` : "";
+    const parentOne = isStudent ? `Parent 1: ${profile.parentOne}` : "";
+    const parentTwo = isStudent ? `Parent 2: ${profile.parentTwo}` : "";
+
+    return [
+      email,
+      phone,
+      school,
+      availability,
+      weeklySchedule,
+      notes,
+      parentOne,
+      parentTwo,
+    ]
+      .filter(Boolean)
+      .join("\n");
+  };
 
   return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <Card className="w-full max-w-md p-4 bg-white shadow-md rounded-lg">
         <CardHeader>
           <CardTitle>
-            {isStudent ? profile.studentName : `${profile.firstName} ${profile.lastName}`}
+            {isStudent
+              ? profile.studentName
+              : `${profile.firstName} ${profile.lastName}`}
           </CardTitle>
           <CardDescription>{profile.school}</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Common fields */}
           <p>Email: {profile.email}</p>
           <p>Phone: {isStudent ? profile.phoneOne : profile.phone}</p>
-
-          {/* Staff-specific field */}
           {!isStudent && <p>Availability: {profile.availability}</p>}
-
-          {/* Student-specific fields */}
           {isStudent && (
             <>
               <p>Weekly Schedule: {profile.weeklySchedule}</p>
@@ -48,7 +77,8 @@ export const ProfileViewModal = ({ isOpen, onClose, profile }: ProfileProps) => 
             </>
           )}
         </CardContent>
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex justify-between">
+          <CopyButton text={getModalContent()} />
           <Button onClick={onClose}>Close</Button>
         </CardFooter>
       </Card>

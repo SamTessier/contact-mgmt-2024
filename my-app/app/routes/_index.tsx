@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../tailwind.css";
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { authorize, getData } from "./sheets.server";
 import { useSelectedMonth } from "context/selectedMonthContext";
-import { countWeekdaysInMonth, calculateMonthlyRate, rates } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "../../@/components/ui/data-table";
 import {

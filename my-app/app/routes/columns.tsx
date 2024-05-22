@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
-import type { Student, StaffMember } from "./_index"; 
-import { calculateMonthlyRate, countWeekdaysInMonth } from '@/lib/utils';
+import type { Student, StaffMember } from "./_index";
+import { calculateMonthlyRate, countWeekdaysInMonth } from "@/lib/utils";
+import { CopyButton } from "@/components/ui/copybutton"; 
 
 export const getStudentColumns = (handleProfileClick: (profile: Student | StaffMember) => void): ColumnDef<Student | StaffMember>[] => [
   {
@@ -9,7 +10,7 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
     enableSorting: true,
     cell: info => (
       <div onClick={() => handleProfileClick(info.row.original)} className="cursor-pointer hover:text-blue-800">
-        {info.getValue() as ReactNode}
+        {info.getValue() as React.ReactNode}
       </div>
     ),
   },
@@ -25,15 +26,28 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
   },
   {
     accessorKey: "phoneOne",
+    id: "phoneOne", 
     header: "Phone 1",
     enableSorting: true,
+    cell: info => (
+      <div className="flex items-center">
+        <CopyButton text={String(info.getValue())} />
+        {info.getValue() as React.ReactNode}
+      </div>
+    ),
   },
   {
     accessorKey: "email",
+    id: "email", 
     header: "Email",
     enableSorting: true,
+    cell: info => (
+      <div className="flex items-center">
+        <CopyButton text={String(info.getValue())} />
+        {info.getValue() as React.ReactNode}
+      </div>
+    ),
   },
-
 ];
 
 export const getStaffColumns = (handleProfileClick: (profile: Student | StaffMember) => void): ColumnDef<Student | StaffMember>[] => [
@@ -47,7 +61,6 @@ export const getStaffColumns = (handleProfileClick: (profile: Student | StaffMem
       </div>
     ),
   },
- 
   {
     accessorKey: "school",
     header: "School",
@@ -55,13 +68,27 @@ export const getStaffColumns = (handleProfileClick: (profile: Student | StaffMem
   },
   {
     accessorKey: "phone",
+    id: "phone", 
     header: "Phone",
     enableSorting: true,
+    cell: info => (
+      <div className="flex items-center">
+        <CopyButton text={String(info.getValue())} />
+        {info.getValue() as React.ReactNode}
+      </div>
+    ),
   },
   {
     accessorKey: "email",
+    id: "email", 
     header: "Email",
     enableSorting: true,
+    cell: info => (
+      <div className="flex items-center">
+        <CopyButton text={String(info.getValue())} />
+        {info.getValue() as React.ReactNode}
+      </div>
+    ),
   },
   {
     accessorKey: "availability",
@@ -74,14 +101,13 @@ export const getAccountingColumns = (handleProfileClick: (profile: Student | Sta
   ...getStudentColumns(handleProfileClick).map(column => ({
     ...column,
   })),
-  // 
   {
-    id: 'billing', 
+    id: 'billing',
     accessorKey: 'billing',
     header: 'Billing',
     cell: info => {
       const year = new Date().getFullYear();
-      const weekdayCounts = countWeekdaysInMonth(year, selectedMonth + 1); 
+      const weekdayCounts = countWeekdaysInMonth(year, selectedMonth + 1);
       const rate = calculateMonthlyRate(info.row.original.weeklySchedule, weekdayCounts);
       return `$${rate.toFixed(2)}`;
     },
