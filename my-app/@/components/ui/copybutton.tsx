@@ -1,7 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import ClipboardJS from 'clipboard';
-import { ClipboardDocumentIcon, ClipboardDocumentCheckIcon } from "@heroicons/react/20/solid";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import ClipboardJS from "clipboard";
+import {
+  ClipboardDocumentIcon,
+  ClipboardDocumentCheckIcon,
+} from "@heroicons/react/20/solid";
 
 interface CopyButtonProps {
   text: string;
@@ -13,16 +21,16 @@ export const CopyButton = ({ text }: CopyButtonProps) => {
 
   useEffect(() => {
     const clipboard = new ClipboardJS(buttonRef.current, {
-      text: () => text
+      text: () => text,
     });
 
-    clipboard.on('success', () => {
+    clipboard.on("success", () => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
 
-    clipboard.on('error', (err) => {
-      console.error('Failed to copy text: ', err);
+    clipboard.on("error", (err) => {
+      console.error("Failed to copy text: ", err);
     });
 
     return () => {
@@ -34,7 +42,10 @@ export const CopyButton = ({ text }: CopyButtonProps) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button ref={buttonRef} className="ml-2 p-1 text-xs border rounded bg-gray-200 hover:bg-gray-300">
+          <button
+            ref={buttonRef}
+            className="mr-2 p-1 text-xs border rounded bg-gray-200 hover:bg-gray-300"
+          >
             {copied ? (
               <ClipboardDocumentCheckIcon className="w-4 h-4 text-green-500" />
             ) : (

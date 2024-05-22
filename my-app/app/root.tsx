@@ -1,17 +1,19 @@
-import type { LinksFunction } from "@remix-run/node";
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
+import React, { useState } from "react";
+import { LinksFunction } from "@remix-run/node";
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import { SelectedMonthProvider } from "context/selectedMonthContext";
 import styles from "../dist/output.css";
+import Sidebar from "@/components/ui/sidebar";
+
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
 export default function App() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <html lang="en">
       <head>
@@ -22,7 +24,12 @@ export default function App() {
       </head>
       <body>
         <SelectedMonthProvider>
-          <Outlet />
+          <div className="flex">
+            <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+            <div className={`flex-1 transition-margin duration-300 ease-in-out ${isOpen ? 'ml-64' : 'ml-16'}`}>
+              <Outlet />
+            </div>
+          </div>
         </SelectedMonthProvider>
         <ScrollRestoration />
         <Scripts />
