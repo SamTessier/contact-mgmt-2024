@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../tailwind.css";
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { authorize, getData } from "./sheets.server";

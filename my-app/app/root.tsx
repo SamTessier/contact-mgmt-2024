@@ -24,10 +24,12 @@ export default function App() {
       </head>
       <body>
         <SelectedMonthProvider>
-          <div className="flex">
+          <div className="relative flex">
             <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-            <div className={`flex-1 transition-margin duration-300 ease-in-out ${isOpen ? 'ml-64' : 'ml-16'}`}>
-              <Outlet />
+            <div className={`flex-1 transition-all duration-300 ease-in-out ${isOpen ? 'ml-64' : 'ml-0'}`}>
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <Outlet />
+              </div>
             </div>
           </div>
         </SelectedMonthProvider>
