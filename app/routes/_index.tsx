@@ -62,29 +62,28 @@ export default function Index() {
   const { staff, students } = useLoaderData<Data>();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState<
-    Student | StaffMember | null
-  >(null);
+  const [selectedProfile, setSelectedProfile] = useState<Student | StaffMember | null>(null);
+  const [selectedSchool, setSelectedSchool] = useState("all");
+
+  const { selectedMonth, setSelectedMonth } = useSelectedMonth(); // Ensure selectedMonth is defined
+  const months = Array.from({ length: 12 }, (_, index) => ({
+    label: new Date(0, index).toLocaleString("default", { month: "long" }),
+    value: index,
+  }));
+  const monthNames = Array.from({ length: 12 }, (_, index) =>
+    new Date(0, index).toLocaleString("default", { month: "long" })
+  );
+
   const handleProfileClick = (profile: Student | StaffMember) => {
     setSelectedProfile(profile);
     setIsModalOpen(true);
   };
 
-  const [selectedSchool, setSelectedSchool] = useState("all");
   const filteredStaff = staff.filter(
     (member: StaffMember) =>
       (selectedSchool === "all" || member.school === selectedSchool) &&
       (member.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
         member.lastName.toLowerCase().includes(searchText.toLowerCase()))
-  );
-
-  const { selectedMonth, setSelectedMonth } = useSelectedMonth();
-  const months = Array.from({ length: 12 }, (_, index) => ({
-    label: new Date(0, index).toLocaleString("default", { month: "long" }),
-    value: index,
-  }));
-  const monthNames = Array.from({ length: 12 }, (item, index) =>
-    new Date(0, index).toLocaleString("default", { month: "long" })
   );
 
   const filteredStudents = students.filter(
@@ -106,10 +105,7 @@ export default function Index() {
 
   const studentColumnsWithClick = getStudentColumns(handleProfileClick);
   const staffColumnsWithClick = getStaffColumns(handleProfileClick);
-  const accountingColumnsWithClick = getAccountingColumns(
-    handleProfileClick,
-    selectedMonth
-  );
+  const accountingColumnsWithClick = getAccountingColumns(handleProfileClick, selectedMonth);
 
   return (
     <div className="container">
@@ -164,6 +160,7 @@ export default function Index() {
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
+              onUpdate={() => window.location.reload()} // Ensure data refresh on update or delete
             />
             <DataTable
               columns={studentColumnsWithClick}
@@ -177,6 +174,7 @@ export default function Index() {
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
+              onUpdate={() => window.location.reload()} // Ensure data refresh on update or delete
             />
             <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
           </TabsContent>
@@ -205,6 +203,7 @@ export default function Index() {
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
+              onUpdate={() => window.location.reload()} // Ensure data refresh on update or delete
             />
             <DataTable
               columns={accountingColumnsWithClick}

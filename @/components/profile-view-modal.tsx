@@ -9,21 +9,48 @@ import {
 import { Button } from "@/components/ui/button";
 import { StaffMember, Student } from "app/routes/_index";
 import { CopyButton } from "@/components/ui/copybutton";
+import { useFetcher } from "@remix-run/react";
 
 interface ProfileProps {
   isOpen: boolean;
   onClose: () => void;
   profile: Student | StaffMember | null;
+  onUpdate: () => void;
 }
 
 export const ProfileViewModal = ({
   isOpen,
   onClose,
   profile,
+  onUpdate,
 }: ProfileProps) => {
+  const fetcher = useFetcher();
+
   if (!isOpen || !profile) return null;
 
   const isStudent = "studentName" in profile;
+
+  const handleEdit = async () => {
+    const updatedProfile = { ...profile, email: "updated@example.com" }; // Replace with actual update logic
+    const range = isStudent ? `Students!A2:I2` : `Staff!A2:F2`; // Update with the correct range
+    fetcher.submit(
+      { data: JSON.stringify(updatedProfile), range },
+      { method: "post", action: "/api/update" }
+    );
+    onUpdate();
+    onClose();
+  };
+
+  const handleDelete = async () => {
+    const range = isStudent ? `Students!A1:I101` : `Staff!A2:F101`;
+    fetcher.submit(
+      { data: JSON.stringify(profile), range },
+      { method: "post", action: "/api/delete" }
+    );
+    onUpdate();
+    onClose();
+  };
+  
 
   const getModalContent = () => {
     const email = `Email: ${profile.email}`;
@@ -79,7 +106,15 @@ export const ProfileViewModal = ({
         </CardContent>
         <CardFooter className="flex justify-between">
           <CopyButton text={getModalContent()} />
-          <Button onClick={onClose}>Close</Button>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={handleEdit}>
+              Edit
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete
+            </Button>
+            <Button onClick={onClose}>Close</Button>
+          </div>
         </CardFooter>
       </Card>
     </div>

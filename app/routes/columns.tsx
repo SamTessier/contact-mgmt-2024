@@ -1,7 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
-import type { Student, StaffMember } from "./_index";
+import type { Student, StaffMember } from "./_index"
 import { calculateMonthlyRate, countWeekdaysInMonth } from "@/lib/utils";
 import { CopyButton } from "@/components/ui/copybutton"; 
+import { Button } from "@/components/ui/button";
 
 export const getStudentColumns = (handleProfileClick: (profile: Student | StaffMember) => void): ColumnDef<Student | StaffMember>[] => [
   {
@@ -45,6 +46,16 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
       <div className="flex items-center">
         <CopyButton text={String(info.getValue())} />
         {info.getValue() as React.ReactNode}
+      </div>
+    ),
+  },
+  {
+    header: "Actions",
+    cell: (info) => (
+      <div className="flex space-x-2">
+        <Button variant="outline" onClick={() => handleProfileClick(info.row.original)}>
+          View
+        </Button>
       </div>
     ),
   },
@@ -95,7 +106,18 @@ export const getStaffColumns = (handleProfileClick: (profile: Student | StaffMem
     header: "Availability",
     enableSorting: true,
   },
+  {
+    header: "Actions",
+    cell: (info) => (
+      <div className="flex space-x-2">
+        <Button variant="outline" onClick={() => handleProfileClick(info.row.original)}>
+          View
+        </Button>
+      </div>
+    ),
+  },
 ];
+
 
 export const getAccountingColumns = (handleProfileClick: (profile: Student | StaffMember) => void, selectedMonth: number): ColumnDef<Student | StaffMember>[] => [
   ...getStudentColumns(handleProfileClick).map(column => ({
@@ -111,5 +133,15 @@ export const getAccountingColumns = (handleProfileClick: (profile: Student | Sta
       const rate = calculateMonthlyRate(info.row.original.weeklySchedule, weekdayCounts);
       return `$${rate.toFixed(2)}`;
     },
+  },
+  {
+    header: "Actions",
+    cell: (info) => (
+      <div className="flex space-x-2">
+        <Button variant="outline" onClick={() => handleProfileClick(info.row.original)}>
+          View
+        </Button>
+      </div>
+    ),
   },
 ];
