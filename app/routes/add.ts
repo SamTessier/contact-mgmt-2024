@@ -1,5 +1,9 @@
 import { ActionFunction, json } from "@remix-run/node";
-import { authorize, addData } from "../sheets.server";
+import { authorize, addData } from "./sheets.server";
+
+export const loader = async () => {
+  return json({ message: "Add route is working. Use POST to add data." });
+};
 
 export const action: ActionFunction = async ({ request }) => {
   console.log("Received add request");

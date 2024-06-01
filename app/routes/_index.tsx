@@ -62,7 +62,9 @@ export default function Index() {
   const { staff, students } = useLoaderData<Data>();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState<Student | StaffMember | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<
+    Student | StaffMember | null
+  >(null);
   const [selectedSchool, setSelectedSchool] = useState("all");
 
   const { selectedMonth, setSelectedMonth } = useSelectedMonth(); // Ensure selectedMonth is defined
@@ -79,19 +81,27 @@ export default function Index() {
     setIsModalOpen(true);
   };
 
-  const filteredStaff = staff.filter(
-    (member: StaffMember) =>
-      (selectedSchool === "all" || member.school === selectedSchool) &&
-      (member.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-        member.lastName.toLowerCase().includes(searchText.toLowerCase()))
-  );
-
-  const filteredStudents = students.filter(
-    (student: Student) =>
+  const filteredStudents = students.filter((student: Student) => {
+    if (!student || !student.studentName || !student.email) {
+      return false;
+    }
+    return (
       (selectedSchool === "all" || student.school === selectedSchool) &&
       (student.studentName.toLowerCase().includes(searchText.toLowerCase()) ||
         student.email.toLowerCase().includes(searchText.toLowerCase()))
-  );
+    );
+  });
+
+  const filteredStaff = staff.filter((member: StaffMember) => {
+    if (!member || !member.firstName || !member.lastName) {
+      return false;
+    }
+    return (
+      (selectedSchool === "all" || member.school === selectedSchool) &&
+      (member.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+        member.lastName.toLowerCase().includes(searchText.toLowerCase()))
+    );
+  });
 
   function getUniqueSchools(
     staff: StaffMember[],
@@ -105,7 +115,10 @@ export default function Index() {
 
   const studentColumnsWithClick = getStudentColumns(handleProfileClick);
   const staffColumnsWithClick = getStaffColumns(handleProfileClick);
-  const accountingColumnsWithClick = getAccountingColumns(handleProfileClick, selectedMonth);
+  const accountingColumnsWithClick = getAccountingColumns(
+    handleProfileClick,
+    selectedMonth
+  );
 
   return (
     <div className="container">

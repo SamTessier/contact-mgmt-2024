@@ -42,14 +42,20 @@ export const ProfileViewModal = ({
   };
 
   const handleDelete = async () => {
-    const range = isStudent ? `Students!A1:I101` : `Staff!A2:F101`;
+    console.log("Profile data:", profile);
+    console.log("Is student:", isStudent);
+  
+    const requestData = { data: JSON.stringify(profile), isStudent: isStudent.toString() };
+    console.log("Request data:", requestData);
+  
     fetcher.submit(
-      { data: JSON.stringify(profile), range },
-      { method: "post", action: "/api/delete" }
+      requestData,
+      { method: "post", action: "/delete", encType: "application/json" }
     );
     onUpdate();
     onClose();
   };
+  
   
 
   const getModalContent = () => {
