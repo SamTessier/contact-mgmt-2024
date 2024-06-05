@@ -164,6 +164,7 @@ export default function Index() {
             </TabsTrigger>
             <TabsTrigger value="accounting" className="tab-style">
               Accounting
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
