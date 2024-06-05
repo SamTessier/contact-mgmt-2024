@@ -164,9 +164,9 @@ export default function Index() {
             </TabsTrigger>
             <TabsTrigger value="accounting" className="tab-style">
               Accounting
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+            </TabsTrigger>
+          </TabsList>
+          
 
           <TabsContent value="students">
             <h2 className="text-2xl font-bold mb-4">Students</h2>
