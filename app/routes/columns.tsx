@@ -38,6 +38,18 @@ export const getStudentColumns = (handleProfileClick: (profile: Student | StaffM
     ),
   },
   {
+    accessorKey: "phoneTwo",
+    id: "phoneTwo",
+    header: "Phone 2",
+    enableSorting: true,
+    cell: info => (
+      <div className="flex items-center">
+        <CopyButton text={String(info.getValue())} />
+        {info.getValue() as React.ReactNode}
+      </div>
+    ),
+  },
+  {
     accessorKey: "email",
     id: "email", 
     header: "Email",

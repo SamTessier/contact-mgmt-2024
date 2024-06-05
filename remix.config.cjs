@@ -1,3 +1,5 @@
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   ignoredRouteFiles: ["**/.*"],
@@ -7,4 +9,14 @@ module.exports = {
   assetsBuildDirectory: "public/build",
   publicPath: "/build/",
   serverBuildPath: "build/index.js",
+  browserNodeBuiltinsPolyfill: {
+    modules: { path: true, os: true, crypto: true },
+  },
+  webpack: (config) => {
+    config.plugins = [
+      ...config.plugins,
+      new NodePolyfillPlugin(),
+    ];
+    return config;
+  },
 };

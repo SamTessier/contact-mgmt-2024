@@ -1,17 +1,20 @@
 const fs = require('fs').promises;
 const path = require('path');
 const process = require('process');
-const {authenticate} = require('@google-cloud/local-auth');
-const {google} = require('googleapis');
+const { authenticate } = require('@google-cloud/local-auth');
+const { google } = require('googleapis');
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
 
 const SCOPES = [
-  'https://www.googleapis.com/auth/spreadsheets.readonly',
   'https://www.googleapis.com/auth/spreadsheets',
-  'https://www.googleapis.com/auth/drive'
+  'https://www.googleapis.com/auth/drive',
 ];
 
-const TOKEN_PATH = path.join(process.cwd(), 'token.json');
-const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
+const TOKEN_PATH = path.join(process.cwd(), process.env.TOKEN_PATH || 'token.json');
+const CREDENTIALS_PATH = path.join(process.cwd(), process.env.CREDENTIALS_PATH || 'credentials.json');
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -29,7 +32,7 @@ async function loadSavedCredentialsIfExist() {
 }
 
 /**
- * Serializes credentials to a file comptible with GoogleAUth.fromJSON.
+ * Serializes credentials to a file compatible with GoogleAuth.fromJSON.
  *
  * @param {OAuth2Client} client
  * @return {Promise<void>}
@@ -48,8 +51,7 @@ async function saveCredentials(client) {
 }
 
 /**
- * Load or request or authorization to call APIs.
- *
+ * Load or request authorization to call APIs.
  */
 async function authorize() {
   let client = await loadSavedCredentialsIfExist();
@@ -66,27 +68,4 @@ async function authorize() {
   return client;
 }
 
-/**
- * Prints the names and majors of students in a sample spreadsheet:
- * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
- * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
- */
-async function listMajors(auth) {
-  const sheets = google.sheets({version: 'v4', auth});
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-    range: 'Class Data!A2:E',
-  });
-  const rows = res.data.values;
-  if (!rows || rows.length === 0) {
-    console.log('No data found.');
-    return;
-  }
-  console.log('Name, Major:');
-  rows.forEach((row) => {
-    // Print columns A and E, which correspond to indices 0 and 4.
-    console.log(`${row[0]}, ${row[4]}`);
-  });
-}
-
-authorize().then(listMajors).catch(console.error);
+module.exports = { authorize };

@@ -38,6 +38,7 @@ export interface Student {
   phoneOne: string;
   parentOne: string;
   parentTwo: string;
+  phoneTwo: string;
 }
 
 interface Data {
@@ -54,7 +55,8 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async (): Promise<Data> => {
   const client = await authorize();
-  const data = await getData(client);
+  const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
+  const data = await getData(client, spreadsheetId);
   return data;
 };
 
@@ -62,12 +64,10 @@ export default function Index() {
   const { staff, students } = useLoaderData<Data>();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState<
-    Student | StaffMember | null
-  >(null);
+  const [selectedProfile, setSelectedProfile] = useState<Student | StaffMember | null>(null);
   const [selectedSchool, setSelectedSchool] = useState("all");
 
-  const { selectedMonth, setSelectedMonth } = useSelectedMonth(); // Ensure selectedMonth is defined
+  const { selectedMonth, setSelectedMonth } = useSelectedMonth();
   const months = Array.from({ length: 12 }, (_, index) => ({
     label: new Date(0, index).toLocaleString("default", { month: "long" }),
     value: index,
@@ -164,8 +164,8 @@ export default function Index() {
             </TabsTrigger>
             <TabsTrigger value="accounting" className="tab-style">
               Accounting
-            </TabsTrigger>
-          </TabsList>
+            </TabsList>
+          </Tabs>
 
           <TabsContent value="students">
             <h2 className="text-2xl font-bold mb-4">Students</h2>
@@ -173,7 +173,7 @@ export default function Index() {
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
-              onUpdate={() => window.location.reload()} // Ensure data refresh on update or delete
+              onUpdate={() => window.location.reload()}
             />
             <DataTable
               columns={studentColumnsWithClick}
@@ -187,7 +187,7 @@ export default function Index() {
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
-              onUpdate={() => window.location.reload()} // Ensure data refresh on update or delete
+              onUpdate={() => window.location.reload()}
             />
             <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
           </TabsContent>
@@ -216,7 +216,7 @@ export default function Index() {
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               profile={selectedProfile}
-              onUpdate={() => window.location.reload()} // Ensure data refresh on update or delete
+              onUpdate={() => window.location.reload()}
             />
             <DataTable
               columns={accountingColumnsWithClick}
