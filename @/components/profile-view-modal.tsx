@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { StaffMember, Student } from "app/routes/_index";
 import { CopyButton } from "@/components/ui/copybutton";
-import { useFetcher, useOutletContext } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 
 interface ProfileProps {
   isOpen: boolean;
@@ -28,7 +28,6 @@ export const ProfileViewModal = ({
   const fetcher = useFetcher();
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState<Student | StaffMember | null>(profile);
-  const { googleSheetsStudentSheetId, googleSheetsStaffSheetId } = useOutletContext();
 
   if (!isOpen || !profile) return null;
 
@@ -60,10 +59,10 @@ export const ProfileViewModal = ({
 
   const handleDelete = async () => {
     console.log("Profile data to delete:", profile);
-    const sheetId = isStudent ? googleSheetsStudentSheetId : googleSheetsStaffSheetId;
+    const sheetName = isStudent ? "Students": "Staff";
     const requestData = new URLSearchParams({
       data: JSON.stringify(profile),
-      sheetId
+      sheetName,
     });
     console.log("Request data:", requestData.toString()); 
     fetcher.submit(
