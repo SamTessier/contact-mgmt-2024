@@ -6,16 +6,38 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"; // Adjust path as necessary
-import { Button } from "@/components/ui/button"; // Adjust path as necessary
-import { StaffMember, Student } from "app/routes/_index";
-import { useFetcher } from "@remix-run/react";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copybutton";
+import { useFetcher, useNavigate } from "@remix-run/react";
+
+export interface Student {
+  studentName: string;
+  school: string;
+  phoneOne: string;
+  phoneTwo: string;
+  email: string;
+  weeklySchedule: string;
+  notes: string;
+  parentOne: string;
+  parentTwo: string;
+}
+
+export interface StaffMember {
+  firstName: string;
+  lastName: string;
+  school: string;
+  phone: string;
+  email: string;
+  availability: string;
+}
 
 interface ProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  profile: Student | StaffMember;
+  profile: Student | StaffMember | null;
   onUpdate: () => void;
+  sheetName: string;
 }
 
 export const ProfileViewModal = ({
@@ -23,8 +45,10 @@ export const ProfileViewModal = ({
   onClose,
   profile,
   onUpdate,
+  sheetName,
 }: ProfileProps) => {
   const fetcher = useFetcher();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState<Student | StaffMember | null>(profile);
 
@@ -35,33 +59,6 @@ export const ProfileViewModal = ({
   }, [profile]);
 
   if (!isOpen || !profile) return null;
-
-  const isStudent = (profile: Student | StaffMember): profile is Student => {
-    return (profile as Student).studentName !== undefined;
-  };
-
-  const handleDelete = () => {
-    const requestData = {
-      data: profile,
-      sheetName: isStudent(profile) ? "Students" : "Staff",
-    };
-    console.log("Request data:", requestData); 
-    fetcher.submit(
-      { 
-        ...requestData
-      },
-      {
-        method: "post",
-        action: `/profile/${profile.email}`, 
-        encType: "application/json",
-      }
-    );
-    onUpdate();
-    onClose();
-  };
-  
-  
-  
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -77,18 +74,46 @@ export const ProfileViewModal = ({
     const updatedProfile = { ...editableProfile };
     const requestData = {
       data: updatedProfile,
-      sheetName: isStudent(profile) ? "Students" : "Staff",
+      sheetName,
     };
     fetcher.submit(
-      { body: JSON.stringify(requestData) },
+      { requestData: JSON.stringify(requestData) },
       {
         method: "post",
         action: "/update-profile",
-        encType: "application/json",
+        encType: "application/json"
       }
     );
     onUpdate();
     onClose();
+  };
+
+  const handleDeleteClick = () => {
+    navigate('/profile/delete', { state: { profile, sheetName } });
+  };
+
+  const getModalContent = () => {
+    const email = `Email: ${profile.email}`;
+    const phone = `Phone: ${sheetName === "Students" ? (profile as Student).phoneOne : (profile as StaffMember).phone}`;
+    const school = `School: ${profile.school}`;
+    const availability = sheetName === "Staff" ? `Availability: ${(profile as StaffMember).availability}` : "";
+    const weeklySchedule = sheetName === "Students" ? `Weekly Schedule: ${(profile as Student).weeklySchedule}` : "";
+    const notes = sheetName === "Students" ? `Notes: ${(profile as Student).notes}` : "";
+    const parentOne = sheetName === "Students" ? `Parent 1: ${(profile as Student).parentOne}` : "";
+    const parentTwo = sheetName === "Students" ? `Parent 2: ${(profile as Student).parentTwo}` : "";
+
+    return [
+      email,
+      phone,
+      school,
+      availability,
+      weeklySchedule,
+      notes,
+      parentOne,
+      parentTwo,
+    ]
+      .filter(Boolean)
+      .join("\n");
   };
 
   return (
@@ -96,9 +121,9 @@ export const ProfileViewModal = ({
       <Card className="w-full max-w-md p-4 bg-white shadow-md rounded-lg">
         <CardHeader>
           <CardTitle>
-            {isStudent(profile)
-              ? profile.studentName
-              : `${profile.firstName} ${profile.lastName}`}
+            {sheetName === "Students"
+              ? (profile as Student).studentName
+              : `${(profile as StaffMember).firstName} ${(profile as StaffMember).lastName}`}
           </CardTitle>
           <CardDescription>{profile.school}</CardDescription>
         </CardHeader>
@@ -114,47 +139,47 @@ export const ProfileViewModal = ({
               />
               <input
                 type="text"
-                name={isStudent(profile) ? "phoneOne" : "phone"}
-                value={isStudent(profile) ? editableProfile?.phoneOne || "" : editableProfile?.phone || ""}
+                name={sheetName === "Students" ? "phoneOne" : "phone"}
+                value={sheetName === "Students" ? (editableProfile as Student)?.phoneOne || "" : (editableProfile as StaffMember)?.phone || ""}
                 onChange={handleInputChange}
                 placeholder="Phone"
               />
-              {!isStudent(profile) && (
+              {sheetName === "Staff" && (
                 <input
                   type="text"
                   name="availability"
-                  value={editableProfile?.availability || ""}
+                  value={(editableProfile as StaffMember)?.availability || ""}
                   onChange={handleInputChange}
                   placeholder="Availability"
                 />
               )}
-              {isStudent(profile) && (
+              {sheetName === "Students" && (
                 <>
                   <input
                     type="text"
                     name="weeklySchedule"
-                    value={editableProfile?.weeklySchedule || ""}
+                    value={(editableProfile as Student)?.weeklySchedule || ""}
                     onChange={handleInputChange}
                     placeholder="Weekly Schedule"
                   />
                   <input
                     type="text"
                     name="notes"
-                    value={editableProfile?.notes || ""}
+                    value={(editableProfile as Student)?.notes || ""}
                     onChange={handleInputChange}
                     placeholder="Notes"
                   />
                   <input
                     type="text"
                     name="parentOne"
-                    value={editableProfile?.parentOne || ""}
+                    value={(editableProfile as Student)?.parentOne || ""}
                     onChange={handleInputChange}
                     placeholder="Parent 1"
                   />
                   <input
                     type="text"
                     name="parentTwo"
-                    value={editableProfile?.parentTwo || ""}
+                    value={(editableProfile as Student)?.parentTwo || ""}
                     onChange={handleInputChange}
                     placeholder="Parent 2"
                   />
@@ -164,31 +189,45 @@ export const ProfileViewModal = ({
           ) : (
             <>
               <p>Email: {profile.email}</p>
-              <p>Phone: {isStudent(profile) ? profile.phoneOne : profile.phone}</p>
-              {!isStudent(profile) && <p>Availability: {profile.availability}</p>}
-              {isStudent(profile) && (
+              <p>Phone: {sheetName === "Students" ? (profile as Student).phoneOne : (profile as StaffMember).phone}</p>
+              {sheetName === "Staff" && <p>Availability: {(profile as StaffMember).availability}</p>}
+              {sheetName === "Students" && (
                 <>
-                  <p>Weekly Schedule: {profile.weeklySchedule}</p>
-                  <p>Notes: {profile.notes}</p>
-                  <p>Parent 1: {profile.parentOne}</p>
-                  <p>Parent 2: {profile.parentTwo}</p>
+                  <p>Weekly Schedule: {(profile as Student).weeklySchedule}</p>
+                  <p>Notes: {(profile as Student).notes}</p>
+                  <p>Parent 1: {(profile as Student).parentOne}</p>
+                  <p>Parent 2: {(profile as Student).parentTwo}</p>
                 </>
               )}
             </>
           )}
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={handleSave}>
-            Save
-          </Button>
-          <Button variant="destructive" onClick={handleDelete}>
-            Delete
-          </Button>
-          <Button onClick={onClose}>Close</Button>
+          <CopyButton text={getModalContent()} />
+          <div className="flex space-x-2">
+            {isEditing ? (
+              <>
+                <Button variant="outline" onClick={handleSave}>
+                  Save
+                </Button>
+                <Button variant="outline" onClick={() => setIsEditing(false)}>
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" onClick={handleEditClick}>
+                  Edit
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteClick}>
+                  Delete
+                </Button>
+              </>
+            )}
+            <Button onClick={onClose}>Close</Button>
+          </div>
         </CardFooter>
       </Card>
     </div>
   );
 };
-
-export default ProfileViewModal;

@@ -117,29 +117,22 @@ export async function deleteData(auth: any, spreadsheetId: string, data: any, sh
   const sheets = google.sheets({ version: "v4", auth });
   const range = sheetName === "Students" ? "Students!A2:I401" : "Staff!A2:F101";
 
-  console.log("Fetching rows from sheet:", sheetName, "with range:", range);
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
     range,
   });
 
   const rows = res.data.values || [];
-  console.log("Rows fetched:", JSON.stringify(rows, null, 2));
-
-  const firstNameToDelete = data.firstName.trim().toLowerCase();
+  const emailToDelete = data.email.trim().toLowerCase();
   let rowIndex = -1;
 
   rows.forEach((row, index) => {
-    console.log(`Processing row ${index + 2}:`, JSON.stringify(row, null, 2));
-    if (row[0] && typeof row[0] === 'string' && row[0].trim().toLowerCase() === firstNameToDelete) {
-      rowIndex = index + 2; 
+    if (row[4] && typeof row[4] === 'string' && row[4].trim().toLowerCase() === emailToDelete) {
+      rowIndex = index + 2; // Google Sheets row index starts from 1
     }
   });
 
-  console.log("Row index to delete:", rowIndex);
-
   if (rowIndex > 1) {
-    console.log("Deleting row:", rowIndex);
     const requests = [{
       deleteDimension: {
         range: {
@@ -151,16 +144,16 @@ export async function deleteData(auth: any, spreadsheetId: string, data: any, sh
       },
     }];
 
-    console.log("Batch update request:", JSON.stringify(requests, null, 2));
     await sheets.spreadsheets.batchUpdate({
       spreadsheetId,
       requestBody: { requests },
     });
-    console.log("Row deleted");
   } else {
-    console.log("No matching row found for deletion");
     throw new Error("No matching row found for deletion");
   }
 }
+
+
+
 
 

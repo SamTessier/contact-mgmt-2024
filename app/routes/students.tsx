@@ -58,6 +58,7 @@ export default function Students() {
         onClose={() => setIsModalOpen(false)}
         profile={selectedProfile}
         onUpdate={() => window.location.reload()}
+        sheetName="Students"
       />
       <DataTable columns={studentColumnsWithClick} data={filteredStudents} />
     </div>

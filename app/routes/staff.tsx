@@ -58,6 +58,7 @@ export default function Staff() {
         onClose={() => setIsModalOpen(false)}
         profile={selectedProfile}
         onUpdate={() => window.location.reload()}
+        sheetName="Staff"
       />
       <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
     </div>
