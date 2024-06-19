@@ -26,6 +26,10 @@
     --radius: 0.5rem; /* Border radius */
   }
 
+  html, body {
+    @apply h-full;
+  }
+  
   body {
     @apply bg-slate-200 text-gray-800;
   }

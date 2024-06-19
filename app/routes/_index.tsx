@@ -22,7 +22,7 @@ export default function Index() {
   );
 
   return (
-    <div className="container">
+    <div>
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
         <h1 className="text-4xl font-bold p-8 uppercase">School App</h1>
 
