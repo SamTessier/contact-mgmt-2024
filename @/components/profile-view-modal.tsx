@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -6,16 +6,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/card"; // Adjust path as necessary
+import { Button } from "@/components/ui/button"; // Adjust path as necessary
 import { StaffMember, Student } from "app/routes/_index";
-import { CopyButton } from "@/components/ui/copybutton";
 import { useFetcher } from "@remix-run/react";
 
 interface ProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  profile: Student | StaffMember | null;
+  profile: Student | StaffMember;
   onUpdate: () => void;
 }
 
@@ -29,9 +28,40 @@ export const ProfileViewModal = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState<Student | StaffMember | null>(profile);
 
+  useEffect(() => {
+    if (profile) {
+      setEditableProfile(profile);
+    }
+  }, [profile]);
+
   if (!isOpen || !profile) return null;
 
-  const isStudent = "studentName" in profile;
+  const isStudent = (profile: Student | StaffMember): profile is Student => {
+    return (profile as Student).studentName !== undefined;
+  };
+
+  const handleDelete = () => {
+    const requestData = {
+      data: profile,
+      sheetName: isStudent(profile) ? "Students" : "Staff",
+    };
+    console.log("Request data:", requestData); 
+    fetcher.submit(
+      { 
+        ...requestData
+      },
+      {
+        method: "post",
+        action: `/profile/${profile.email}`, 
+        encType: "application/json",
+      }
+    );
+    onUpdate();
+    onClose();
+  };
+  
+  
+  
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -43,58 +73,22 @@ export const ProfileViewModal = ({
     setEditableProfile({ ...editableProfile, [name]: value });
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     const updatedProfile = { ...editableProfile };
     const requestData = {
-      data: JSON.stringify(updatedProfile),
-      isStudent: isStudent.toString(),
+      data: updatedProfile,
+      sheetName: isStudent(profile) ? "Students" : "Staff",
     };
     fetcher.submit(
-      requestData,
-      { method: "post", action: "/api/update", encType: "application/json" }
+      { body: JSON.stringify(requestData) },
+      {
+        method: "post",
+        action: "/update-profile",
+        encType: "application/json",
+      }
     );
     onUpdate();
     onClose();
-  };
-
-  const handleDelete = async () => {
-    console.log("Profile data to delete:", profile);
-    const sheetName = isStudent ? "Students": "Staff";
-    const requestData = new URLSearchParams({
-      data: JSON.stringify(profile),
-      sheetName,
-    });
-    console.log("Request data:", requestData.toString()); 
-    fetcher.submit(
-      requestData,
-      { method: "post", action: "/delete" }
-    );
-    onUpdate();
-    onClose();
-  };
-
-  const getModalContent = () => {
-    const email = `Email: ${profile.email}`;
-    const phone = `Phone: ${isStudent ? profile.phoneOne : profile.phone}`;
-    const school = `School: ${profile.school}`;
-    const availability = !isStudent ? `Availability: ${profile.availability}` : "";
-    const weeklySchedule = isStudent ? `Weekly Schedule: ${profile.weeklySchedule}` : "";
-    const notes = isStudent ? `Notes: ${profile.notes}` : "";
-    const parentOne = isStudent ? `Parent 1: ${profile.parentOne}` : "";
-    const parentTwo = isStudent ? `Parent 2: ${profile.parentTwo}` : "";
-
-    return [
-      email,
-      phone,
-      school,
-      availability,
-      weeklySchedule,
-      notes,
-      parentOne,
-      parentTwo,
-    ]
-      .filter(Boolean)
-      .join("\n");
   };
 
   return (
@@ -102,7 +96,7 @@ export const ProfileViewModal = ({
       <Card className="w-full max-w-md p-4 bg-white shadow-md rounded-lg">
         <CardHeader>
           <CardTitle>
-            {isStudent
+            {isStudent(profile)
               ? profile.studentName
               : `${profile.firstName} ${profile.lastName}`}
           </CardTitle>
@@ -120,12 +114,12 @@ export const ProfileViewModal = ({
               />
               <input
                 type="text"
-                name={isStudent ? "phoneOne" : "phone"}
-                value={isStudent ? editableProfile?.phoneOne || "" : editableProfile?.phone || ""}
+                name={isStudent(profile) ? "phoneOne" : "phone"}
+                value={isStudent(profile) ? editableProfile?.phoneOne || "" : editableProfile?.phone || ""}
                 onChange={handleInputChange}
                 placeholder="Phone"
               />
-              {!isStudent && (
+              {!isStudent(profile) && (
                 <input
                   type="text"
                   name="availability"
@@ -134,7 +128,7 @@ export const ProfileViewModal = ({
                   placeholder="Availability"
                 />
               )}
-              {isStudent && (
+              {isStudent(profile) && (
                 <>
                   <input
                     type="text"
@@ -170,9 +164,9 @@ export const ProfileViewModal = ({
           ) : (
             <>
               <p>Email: {profile.email}</p>
-              <p>Phone: {isStudent ? profile.phoneOne : profile.phone}</p>
-              {!isStudent && <p>Availability: {profile.availability}</p>}
-              {isStudent && (
+              <p>Phone: {isStudent(profile) ? profile.phoneOne : profile.phone}</p>
+              {!isStudent(profile) && <p>Availability: {profile.availability}</p>}
+              {isStudent(profile) && (
                 <>
                   <p>Weekly Schedule: {profile.weeklySchedule}</p>
                   <p>Notes: {profile.notes}</p>
@@ -184,29 +178,13 @@ export const ProfileViewModal = ({
           )}
         </CardContent>
         <CardFooter className="flex justify-between">
-          <CopyButton text={getModalContent()} />
-          <div className="flex space-x-2">
-            {isEditing ? (
-              <>
-                <Button variant="outline" onClick={handleSave}>
-                  Save
-                </Button>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" onClick={handleEditClick}>
-                  Edit
-                </Button>
-                <Button variant="destructive" onClick={handleDelete}>
-                  Delete
-                </Button>
-              </>
-            )}
-            <Button onClick={onClose}>Close</Button>
-          </div>
+          <Button variant="outline" onClick={handleSave}>
+            Save
+          </Button>
+          <Button variant="destructive" onClick={handleDelete}>
+            Delete
+          </Button>
+          <Button onClick={onClose}>Close</Button>
         </CardFooter>
       </Card>
     </div>

@@ -98,39 +98,44 @@ export async function getData(auth: any, spreadsheetId: string): Promise<Data> {
   return { staff, students };
 }
 
-export async function addData(auth: any, data: any, range: string): Promise<void> {
+export async function addData(auth: any, data: any, sheetName: string): Promise<void> {
   const sheets = google.sheets({ version: "v4", auth });
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
+  const range = sheetName === "Students" ? "Students!A2:I401" : "Staff!A2:F101";
+  const values = [Object.values(data)];
+  
   await sheets.spreadsheets.values.append({
-    spreadsheetId,
+    spreadsheetId: process.env.GOOGLE_SHEETS_ID ?? '',
     range,
-    valueInputOption: "RAW",
+    valueInputOption: "USER_ENTERED",
     resource: {
-      values: [Object.values(data)],
+      values,
     },
   });
 }
 
-export async function deleteData(data: any, sheetId: string): Promise<void> {
-  const auth = await loadSavedCredentialsIfExist();
-  if (!auth) {
-    console.log("Failed to load saved credentials");
-    return;
-  }
-
+export async function deleteData(auth: any, spreadsheetId: string, data: any, sheetName: string): Promise<void> {
   const sheets = google.sheets({ version: "v4", auth });
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
-  const range = sheetId === process.env.GOOGLE_SHEETS_STUDENTS_ID ? "Students!A2:I401" : "Staff!A2:F101"; 
+  const range = sheetName === "Students" ? "Students!A2:I401" : "Staff!A2:F101";
 
-  console.log("Fetching rows from sheet ID:", sheetId, "with range:", range);
+  console.log("Fetching rows from sheet:", sheetName, "with range:", range);
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
     range,
   });
 
   const rows = res.data.values || [];
-  console.log("Rows fetched:", rows);
-  const rowIndex = rows.findIndex((row) => row.includes(data.email)) + 2;
+  console.log("Rows fetched:", JSON.stringify(rows, null, 2));
+
+  const firstNameToDelete = data.firstName.trim().toLowerCase();
+  let rowIndex = -1;
+
+  rows.forEach((row, index) => {
+    console.log(`Processing row ${index + 2}:`, JSON.stringify(row, null, 2));
+    if (row[0] && typeof row[0] === 'string' && row[0].trim().toLowerCase() === firstNameToDelete) {
+      rowIndex = index + 2; 
+    }
+  });
+
   console.log("Row index to delete:", rowIndex);
 
   if (rowIndex > 1) {
@@ -138,7 +143,7 @@ export async function deleteData(data: any, sheetId: string): Promise<void> {
     const requests = [{
       deleteDimension: {
         range: {
-          sheetId: parseInt(sheetId, 10),
+          sheetId: sheetName === "Students" ? parseInt(process.env.GOOGLE_SHEETS_STUDENTS_ID, 10) : parseInt(process.env.GOOGLE_SHEETS_STAFF_ID, 10),
           dimension: 'ROWS',
           startIndex: rowIndex - 1,
           endIndex: rowIndex,
@@ -146,6 +151,7 @@ export async function deleteData(data: any, sheetId: string): Promise<void> {
       },
     }];
 
+    console.log("Batch update request:", JSON.stringify(requests, null, 2));
     await sheets.spreadsheets.batchUpdate({
       spreadsheetId,
       requestBody: { requests },
@@ -156,3 +162,5 @@ export async function deleteData(data: any, sheetId: string): Promise<void> {
     throw new Error("No matching row found for deletion");
   }
 }
+
+

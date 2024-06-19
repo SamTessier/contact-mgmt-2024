@@ -1,50 +1,8 @@
-import { useState } from "react";
-import type { LoaderFunction, MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { authorize, getData } from "./sheets.server";
+import { MetaFunction } from "@remix-run/node";
+import { NavLink, Outlet } from "@remix-run/react";
 import { useSelectedMonth } from "context/selectedMonthContext";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable } from "../../@/components/ui/data-table";
-import {
-  getStudentColumns,
-  getStaffColumns,
-  getAccountingColumns,
-} from "./columns";
-import { Input } from "../../@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ProfileViewModal } from "@/components/profile-view-modal";
-
-export interface StaffMember {
-  firstName: string;
-  lastName: string;
-  school: string;
-  phone: string;
-  email: string;
-  availability: string;
-}
-
-export interface Student {
-  school: string;
-  studentName: string;
-  weeklySchedule: string;
-  notes: string;
-  email: string;
-  phoneOne: string;
-  parentOne: string;
-  parentTwo: string;
-  phoneTwo: string;
-}
-
-interface Data {
-  staff: StaffMember[];
-  students: Student[];
-}
 
 export const meta: MetaFunction = () => {
   return [
@@ -53,20 +11,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader: LoaderFunction = async (): Promise<Data> => {
-  const client = await authorize();
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
-  const data = await getData(client, spreadsheetId);
-  return data;
-};
-
 export default function Index() {
-  const { staff, students } = useLoaderData<Data>();
-  const [searchText, setSearchText] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState<Student | StaffMember | null>(null);
-  const [selectedSchool, setSelectedSchool] = useState("all");
-
   const { selectedMonth, setSelectedMonth } = useSelectedMonth();
   const months = Array.from({ length: 12 }, (_, index) => ({
     label: new Date(0, index).toLocaleString("default", { month: "long" }),
@@ -76,155 +21,43 @@ export default function Index() {
     new Date(0, index).toLocaleString("default", { month: "long" })
   );
 
-  const handleProfileClick = (profile: Student | StaffMember) => {
-    setSelectedProfile(profile);
-    setIsModalOpen(true);
-  };
-
-  const filteredStudents = students.filter((student: Student) => {
-    if (!student || !student.studentName || !student.email) {
-      return false;
-    }
-    return (
-      (selectedSchool === "all" || student.school === selectedSchool) &&
-      (student.studentName.toLowerCase().includes(searchText.toLowerCase()) ||
-        student.email.toLowerCase().includes(searchText.toLowerCase()))
-    );
-  });
-
-  const filteredStaff = staff.filter((member: StaffMember) => {
-    if (!member || !member.firstName || !member.lastName) {
-      return false;
-    }
-    return (
-      (selectedSchool === "all" || member.school === selectedSchool) &&
-      (member.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-        member.lastName.toLowerCase().includes(searchText.toLowerCase()))
-    );
-  });
-
-  function getUniqueSchools(
-    staff: StaffMember[],
-    students: Student[]
-  ): string[] {
-    const schoolSet = new Set<string>();
-    staff.forEach((member) => schoolSet.add(member.school));
-    students.forEach((student) => schoolSet.add(student.school));
-    return Array.from(schoolSet);
-  }
-
-  const studentColumnsWithClick = getStudentColumns(handleProfileClick);
-  const staffColumnsWithClick = getStaffColumns(handleProfileClick);
-  const accountingColumnsWithClick = getAccountingColumns(
-    handleProfileClick,
-    selectedMonth
-  );
-
   return (
     <div className="container">
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
         <h1 className="text-4xl font-bold p-8 uppercase">School App</h1>
 
-        <Input
-          className="border-gray-300 shadow-lg px-4 py-2 justify-center rounded-md"
-          type="text"
-          placeholder="Search..."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
+        <div className="mb-4">
+          <NavLink to="/students" className="mr-4">
+            <Button variant="outline">Students</Button>
+          </NavLink>
+          <NavLink to="/staff" className="mr-4">
+            <Button variant="outline">Staff</Button>
+          </NavLink>
+          <NavLink to="/accounting" className="mr-4">
+            <Button variant="outline">Accounting</Button>
+          </NavLink>
+        </div>
+
+        <Outlet />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">Filter by School</Button>
+            <Button className="button-style" variant="outline">
+              {monthNames[selectedMonth]}
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem
-              className="dropdown-menu-item"
-              onClick={() => setSelectedSchool("all")}
-            >
-              All
-            </DropdownMenuItem>
-            {getUniqueSchools(staff, students).map((school: string) => (
+            {months.map((month) => (
               <DropdownMenuItem
                 className="dropdown-menu-item"
-                key={school}
-                onClick={() => setSelectedSchool(school)}
+                key={month.value}
+                onClick={() => setSelectedMonth(month.value)}
               >
-                {school}
+                {month.label}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Tabs defaultValue="students" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 gap-4">
-            <TabsTrigger value="students" className="tab-style">
-              Students
-            </TabsTrigger>
-            <TabsTrigger value="staff" className="tab-style">
-              Staff
-            </TabsTrigger>
-            <TabsTrigger value="accounting" className="tab-style">
-              Accounting
-            </TabsTrigger>
-          </TabsList>
-          
-
-          <TabsContent value="students">
-            <h2 className="text-2xl font-bold mb-4">Students</h2>
-            <ProfileViewModal
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-              profile={selectedProfile}
-              onUpdate={() => window.location.reload()}
-            />
-            <DataTable
-              columns={studentColumnsWithClick}
-              data={filteredStudents}
-            />
-          </TabsContent>
-
-          <TabsContent value="staff">
-            <h2 className="text-2xl font-bold mb-4">Staff</h2>
-            <ProfileViewModal
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-              profile={selectedProfile}
-              onUpdate={() => window.location.reload()}
-            />
-            <DataTable columns={staffColumnsWithClick} data={filteredStaff} />
-          </TabsContent>
-
-          <TabsContent value="accounting">
-            <h2 className="text-2xl font-bold mb-4">Accounting</h2>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="button-style" variant="outline">
-                  {monthNames[selectedMonth]}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {months.map((month) => (
-                  <DropdownMenuItem
-                    className="dropdown-menu-item"
-                    key={month.value}
-                    onClick={() => setSelectedMonth(month.value)}
-                  >
-                    {month.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <ProfileViewModal
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-              profile={selectedProfile}
-              onUpdate={() => window.location.reload()}
-            />
-            <DataTable
-              columns={accountingColumnsWithClick}
-              data={filteredStudents}
-            />
-          </TabsContent>
-        </Tabs>
       </div>
     </div>
   );
