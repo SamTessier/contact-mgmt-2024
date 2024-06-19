@@ -153,7 +153,40 @@ export async function deleteData(auth: any, spreadsheetId: string, data: any, sh
   }
 }
 
+export async function updateData(auth: any, spreadsheetId: string, data: any, sheetName: string): Promise<void> {
+  const sheets = google.sheets({ version: "v4", auth });
+  const range = sheetName === "Students" ? "Students!A2:I401" : "Staff!A2:F101";
 
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range,
+  });
 
+  const rows = res.data.values || [];
+  const emailToUpdate = data.email.trim().toLowerCase();
+  let rowIndex = -1;
+
+  rows.forEach((row, index) => {
+    if (row[4] && typeof row[4] === 'string' && row[4].trim().toLowerCase() === emailToUpdate) {
+      rowIndex = index + 2; // Google Sheets row index starts from 1
+    }
+  });
+
+  if (rowIndex > 1) {
+    const values = [Object.values(data)];
+    const updateRange = `${sheetName}!A${rowIndex}:${sheetName === "Students" ? "I" : "F"}${rowIndex}`;
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: updateRange,
+      valueInputOption: "USER_ENTERED",
+      resource: {
+        values,
+      },
+    });
+  } else {
+    throw new Error("No matching row found for update");
+  }
+}
 
 

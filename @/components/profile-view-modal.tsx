@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copybutton";
-import { useFetcher, useNavigate } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 
 export interface Student {
   studentName: string;
@@ -47,9 +47,7 @@ export const ProfileViewModal = ({
   onUpdate,
   sheetName,
 }: ProfileProps) => {
-  const fetcher = useFetcher();
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState<Student | StaffMember | null>(profile);
 
   useEffect(() => {
@@ -61,35 +59,7 @@ export const ProfileViewModal = ({
   if (!isOpen || !profile) return null;
 
   const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!editableProfile) return;
-    const { name, value } = e.target;
-    setEditableProfile({ ...editableProfile, [name]: value });
-  };
-
-  const handleSave = () => {
-    const updatedProfile = { ...editableProfile };
-    const requestData = {
-      data: updatedProfile,
-      sheetName,
-    };
-    fetcher.submit(
-      { requestData: JSON.stringify(requestData) },
-      {
-        method: "post",
-        action: "/update-profile",
-        encType: "application/json"
-      }
-    );
-    onUpdate();
-    onClose();
-  };
-
-  const handleDeleteClick = () => {
-    navigate('/profile/delete', { state: { profile, sheetName } });
+    navigate('/profile/edit', { state: { profile, sheetName } });
   };
 
   const getModalContent = () => {
@@ -128,102 +98,30 @@ export const ProfileViewModal = ({
           <CardDescription>{profile.school}</CardDescription>
         </CardHeader>
         <CardContent>
-          {isEditing ? (
-            <>
-              <input
-                type="text"
-                name="email"
-                value={editableProfile?.email || ""}
-                onChange={handleInputChange}
-                placeholder="Email"
-              />
-              <input
-                type="text"
-                name={sheetName === "Students" ? "phoneOne" : "phone"}
-                value={sheetName === "Students" ? (editableProfile as Student)?.phoneOne || "" : (editableProfile as StaffMember)?.phone || ""}
-                onChange={handleInputChange}
-                placeholder="Phone"
-              />
-              {sheetName === "Staff" && (
-                <input
-                  type="text"
-                  name="availability"
-                  value={(editableProfile as StaffMember)?.availability || ""}
-                  onChange={handleInputChange}
-                  placeholder="Availability"
-                />
-              )}
-              {sheetName === "Students" && (
-                <>
-                  <input
-                    type="text"
-                    name="weeklySchedule"
-                    value={(editableProfile as Student)?.weeklySchedule || ""}
-                    onChange={handleInputChange}
-                    placeholder="Weekly Schedule"
-                  />
-                  <input
-                    type="text"
-                    name="notes"
-                    value={(editableProfile as Student)?.notes || ""}
-                    onChange={handleInputChange}
-                    placeholder="Notes"
-                  />
-                  <input
-                    type="text"
-                    name="parentOne"
-                    value={(editableProfile as Student)?.parentOne || ""}
-                    onChange={handleInputChange}
-                    placeholder="Parent 1"
-                  />
-                  <input
-                    type="text"
-                    name="parentTwo"
-                    value={(editableProfile as Student)?.parentTwo || ""}
-                    onChange={handleInputChange}
-                    placeholder="Parent 2"
-                  />
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <p>Email: {profile.email}</p>
-              <p>Phone: {sheetName === "Students" ? (profile as Student).phoneOne : (profile as StaffMember).phone}</p>
-              {sheetName === "Staff" && <p>Availability: {(profile as StaffMember).availability}</p>}
-              {sheetName === "Students" && (
-                <>
-                  <p>Weekly Schedule: {(profile as Student).weeklySchedule}</p>
-                  <p>Notes: {(profile as Student).notes}</p>
-                  <p>Parent 1: {(profile as Student).parentOne}</p>
-                  <p>Parent 2: {(profile as Student).parentTwo}</p>
-                </>
-              )}
-            </>
-          )}
+          <>
+            <p>Email: {profile.email}</p>
+            <p>Phone: {sheetName === "Students" ? (profile as Student).phoneOne : (profile as StaffMember).phone}</p>
+            <p>School: {profile.school}</p>
+            {sheetName === "Staff" && <p>Availability: {(profile as StaffMember).availability}</p>}
+            {sheetName === "Students" && (
+              <>
+                <p>Weekly Schedule: {(profile as Student).weeklySchedule}</p>
+                <p>Notes: {(profile as Student).notes}</p>
+                <p>Parent 1: {(profile as Student).parentOne}</p>
+                <p>Parent 2: {(profile as Student).parentTwo}</p>
+              </>
+            )}
+          </>
         </CardContent>
         <CardFooter className="flex justify-between">
           <CopyButton text={getModalContent()} />
           <div className="flex space-x-2">
-            {isEditing ? (
-              <>
-                <Button variant="outline" onClick={handleSave}>
-                  Save
-                </Button>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" onClick={handleEditClick}>
-                  Edit
-                </Button>
-                <Button variant="destructive" onClick={handleDeleteClick}>
-                  Delete
-                </Button>
-              </>
-            )}
+            <Button variant="outline" onClick={handleEditClick}>
+              Edit
+            </Button>
+            <Button variant="destructive" onClick={() => navigate('/profile/delete', { state: { profile, sheetName } })}>
+              Delete
+            </Button>
             <Button onClick={onClose}>Close</Button>
           </div>
         </CardFooter>
