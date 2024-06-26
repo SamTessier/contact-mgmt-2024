@@ -1,92 +1,47 @@
 import { DataLayer } from './datalayer';
 import { google } from 'googleapis';
 import fs from 'fs/promises';
-import path from 'path';
-import { authenticate } from '@google-cloud/local-auth';
-
-const SCOPES = [
-  'https://www.googleapis.com/auth/spreadsheets',
-  'https://www.googleapis.com/auth/drive',
-];
 
 class GoogleSheetsDataLayer extends DataLayer {
-  constructor(spreadsheetId, sheetName, credentialsPath, tokenPath) {
+  private authClient: any;
+
+  constructor(
+    private spreadsheetId: string,
+    private sheetName: string,
+    private credentialsPath: string
+  ) {
     super();
-    this.spreadsheetId = spreadsheetId;
-    this.sheetName = sheetName;
-    this.credentialsPath = credentialsPath;
-    this.tokenPath = tokenPath;
-    this.sheets = google.sheets('v4');
+    this.authClient = null;
   }
 
-  async loadSavedCredentialsIfExist() {
-    try {
-      const content = await fs.readFile(this.tokenPath);
-      const credentials = JSON.parse(content);
-      return google.auth.fromJSON(credentials);
-    } catch (err) {
-      return null;
+  private async authenticate() {
+    if (!this.authClient) {
+      const auth = new google.auth.GoogleAuth({
+        keyFile: this.credentialsPath, // Path to your JSON key file
+        scopes: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'],
+      });
+      this.authClient = await auth.getClient(); // Logs in as the service account
     }
-  }
-
-  async saveCredentials(client) {
-    const content = await fs.readFile(this.credentialsPath);
-    const keys = JSON.parse(content);
-    const key = keys.installed || keys.web;
-    const payload = JSON.stringify({
-      type: 'authorized_user',
-      client_id: key.client_id,
-      client_secret: key.client_secret,
-      refresh_token: client.credentials.refresh_token,
-    });
-    await fs.writeFile(this.tokenPath, payload);
-  }
-
-  async authorize() {
-    let client = await this.loadSavedCredentialsIfExist();
-    if (client) {
-      return client;
-    }
-    client = await authenticate({
-      scopes: SCOPES,
-      keyfilePath: this.credentialsPath,
-    });
-    if (client.credentials) {
-      await this.saveCredentials(client);
-    }
-    return client;
+    return this.authClient;
   }
 
   async getData() {
-    const auth = await this.authorize();
-    const sheets = google.sheets({ version: 'v4', auth });
+    const auth = await this.authenticate(); // Logs in as the service account
+    const sheets = google.sheets({ version: 'v4', auth }); // Talks to Google Sheets
 
-    const staffHeaders = ['firstName', 'lastName', 'school', 'phone', 'email', 'availability'];
-    const studentHeaders = ['school', 'studentName', 'weeklySchedule', 'notes', 'email', 'phoneOne', 'parentOne', 'parentTwo'];
-
-    const staffRes = await sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Staff!A2:F101',
+    const res = await sheets.spreadsheets.values.get({
+      spreadsheetId: this.spreadsheetId, // Your Google Sheet ID
+      range: `${this.sheetName}!A2:F101`, // The part of the sheet you want to read
     });
-    const staffRows = staffRes.data.values || [];
-    const staff = staffRows.map(row => Object.fromEntries(row.map((cell, index) => [staffHeaders[index], cell])));
-
-    const studentsRes = await sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Students!A2:I401',
-    });
-    const studentsRows = studentsRes.data.values || [];
-    const students = studentsRows.map(row => Object.fromEntries(row.map((cell, index) => [studentHeaders[index], cell])));
-
-    return { staff, students };
+    return res.data.values || []; // Returns the data from the sheet
   }
 
-  async addData(data, range) {
-    const auth = await this.authorize();
+  async addData(data: { [key: string]: any }) {
+    const auth = await this.authenticate();
     const sheets = google.sheets({ version: 'v4', auth });
     await sheets.spreadsheets.values.append({
       spreadsheetId: this.spreadsheetId,
-      range,
+      range: `${this.sheetName}!A:F`,
       valueInputOption: 'RAW',
       resource: {
         values: [Object.values(data)],
@@ -94,9 +49,11 @@ class GoogleSheetsDataLayer extends DataLayer {
     });
   }
 
-  async updateData(data, range) {
-    const auth = await this.authorize();
+  async updateData(data: { [key: string]: any }, id: number) {
+    const auth = await this.authenticate();
     const sheets = google.sheets({ version: 'v4', auth });
+
+    const range = `${this.sheetName}!A${id}:F${id}`; // Assume the ID corresponds to the row number
     await sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range,
@@ -107,27 +64,16 @@ class GoogleSheetsDataLayer extends DataLayer {
     });
   }
 
-  async deleteData(data, isStudent) {
-    const auth = await this.authorize();
+  async deleteData(id: number) {
+    const auth = await this.authenticate();
     const sheets = google.sheets({ version: 'v4', auth });
 
-    const range = isStudent ? 'Students!A2:I401' : 'Staff!A2:F101';
-    const res = await sheets.spreadsheets.values.get({
+    const range = `${this.sheetName}!A${id}:F${id}`; // Assume the ID corresponds to the row number
+    await sheets.spreadsheets.values.clear({
       spreadsheetId: this.spreadsheetId,
       range,
     });
-    const rows = res.data.values || [];
-    const rowIndex = rows.findIndex(row => row.includes(data.email)) + 2;
-
-    if (rowIndex > 1) {
-      const deleteRange = isStudent ? `Students!A${rowIndex}:I${rowIndex}` : `Staff!A${rowIndex}:F${rowIndex}`;
-      await sheets.spreadsheets.values.clear({
-        spreadsheetId: this.spreadsheetId,
-        range: deleteRange,
-      });
-    }
   }
 }
 
 export default GoogleSheetsDataLayer;
-

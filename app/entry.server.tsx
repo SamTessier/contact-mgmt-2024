@@ -5,14 +5,53 @@
  */
 
 import { PassThrough } from "node:stream";
-
+import express from "express";
 import type { AppLoadContext, EntryContext } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import connection from "./config/db";
+import { createRequestHandler } from "@remix-run/express";
 
 const ABORT_DELAY = 5_000;
+
+const app = express();
+const port = process.env.PORT || 8080;
+
+app.use(express.json());
+
+app.get("/test-db", async (req, res) => {
+  try {
+    const results = await connection.query("SELECT 1 + 1 AS solution");
+    res.json({ status: "ok", solution: results[0].solution });
+  } catch (err) {
+    res.status(500).json({ error: "Database connection failed", details: err });
+  }
+});
+
+app.use(
+  "*",
+  createRequestHandler({
+    getLoadContext() {
+      // Whatever you return here will be passed as `context` to your loaders.
+      return {};
+    },
+    getDocumentRequestHandler(options) {
+      return (req, res, next) => {
+        handleRequest(req, res, options)
+          .then((response) => {
+            res.status(response.status).set(response.headers.raw()).send(response.body);
+          })
+          .catch(next);
+      };
+    }
+  })
+);
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
 
 export default function handleRequest(
   request: Request,

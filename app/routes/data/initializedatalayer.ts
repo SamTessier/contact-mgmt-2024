@@ -1,12 +1,17 @@
-import GoogleSheetsDataLayer from './googleSheetsDataLayer';
-import SQLDataLayer from './sqlDataLayer';
+import GoogleSheetsDataLayer from "./googlesheetsdatalayer";
+import SQLDataLayer from "./sqldatalayer";
 
-let dataLayer;
+let dataLayer: DataLayer;
 
 if (process.env.DATA_SOURCE === 'googleSheets') {
-  dataLayer = new GoogleSheetsDataLayer(process.env.GOOGLE_SHEETS_ID, process.env.GOOGLE_SHEETS_NAME);
+  dataLayer = new GoogleSheetsDataLayer(
+    process.env.GOOGLE_SHEETS_ID,
+    process.env.GOOGLE_SHEETS_NAME,
+    process.env.CREDENTIALS_PATH,
+    process.env.TOKEN_PATH
+  );
 } else if (process.env.DATA_SOURCE === 'sql') {
-  dataLayer = new SQLDataLayer(process.env.SQL_CONNECTION_STRING);
+  dataLayer = new SQLDataLayer();
 } else {
   throw new Error('Invalid data source specified');
 }
