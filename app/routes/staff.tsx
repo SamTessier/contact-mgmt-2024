@@ -27,7 +27,7 @@ export default function Staff() {
   };
 
   const handleAddProfile = () => {
-    navigate('/profile/add', { state: { sheetName: 'Staff' } });
+    navigate('/staff/add', { state: { sheetName: 'Staff' } });
   };
 
   const filteredStaff = staff.filter((member) => {

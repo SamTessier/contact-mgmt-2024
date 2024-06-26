@@ -27,7 +27,7 @@ export default function Students() {
   };
 
   const handleAddProfile = () => {
-    navigate('/profile/add', { state: { sheetName: 'Students' } });
+    navigate('/students/add', { state: { sheetName: 'Students' } });
   };
 
   const filteredStudents = students.filter((student) => {

@@ -1,7 +1,6 @@
 import { json, ActionFunction } from "@remix-run/node";
 import { useFetcher, useNavigate, useLocation } from "@remix-run/react";
 import { authorize, deleteData } from "./sheets.server";
-import { useEffect } from "react";
 
 export const action: ActionFunction = async ({ request }) => {
   const text = await request.text();

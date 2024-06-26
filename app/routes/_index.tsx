@@ -1,4 +1,4 @@
-import { MetaFunction } from "@remix-run/node";
+import { MetaFunction, redirect } from "@remix-run/node";
 import { NavLink, Outlet } from "@remix-run/react";
 import { useSelectedMonth } from "context/selectedMonthContext";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -10,6 +10,12 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
+
+// remix loader function that redirects to /students
+
+export function loader() {
+  return redirect("/students");
+}
 
 export default function Index() {
   const { selectedMonth, setSelectedMonth } = useSelectedMonth();
