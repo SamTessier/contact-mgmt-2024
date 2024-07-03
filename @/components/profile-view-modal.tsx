@@ -48,7 +48,9 @@ export const ProfileViewModal = ({
   sheetName,
 }: ProfileProps) => {
   const navigate = useNavigate();
-  const [editableProfile, setEditableProfile] = useState<Student | StaffMember | null>(profile);
+  const [editableProfile, setEditableProfile] = useState<
+    Student | StaffMember | null
+  >(profile);
 
   useEffect(() => {
     if (profile) {
@@ -59,18 +61,40 @@ export const ProfileViewModal = ({
   if (!isOpen || !profile) return null;
 
   const handleEditClick = () => {
-    navigate('/profile/edit', { state: { profile, sheetName } });
+    navigate("/profile/edit", { state: { profile, sheetName } });
   };
+
+  const handleDeleteClick = () => {
+    navigate(`/${sheetName}/delete?email=${profile.email}`);
+  };
+  
 
   const getModalContent = () => {
     const email = `Email: ${profile.email}`;
-    const phone = `Phone: ${sheetName === "Students" ? (profile as Student).phoneOne : (profile as StaffMember).phone}`;
+    const phone = `Phone: ${
+      sheetName === "Students"
+        ? (profile as Student).phoneOne
+        : (profile as StaffMember).phone
+    }`;
     const school = `School: ${profile.school}`;
-    const availability = sheetName === "Staff" ? `Availability: ${(profile as StaffMember).availability}` : "";
-    const weeklySchedule = sheetName === "Students" ? `Weekly Schedule: ${(profile as Student).weeklySchedule}` : "";
-    const notes = sheetName === "Students" ? `Notes: ${(profile as Student).notes}` : "";
-    const parentOne = sheetName === "Students" ? `Parent 1: ${(profile as Student).parentOne}` : "";
-    const parentTwo = sheetName === "Students" ? `Parent 2: ${(profile as Student).parentTwo}` : "";
+    const availability =
+      sheetName === "Staff"
+        ? `Availability: ${(profile as StaffMember).availability}`
+        : "";
+    const weeklySchedule =
+      sheetName === "Students"
+        ? `Weekly Schedule: ${(profile as Student).weeklySchedule}`
+        : "";
+    const notes =
+      sheetName === "Students" ? `Notes: ${(profile as Student).notes}` : "";
+    const parentOne =
+      sheetName === "Students"
+        ? `Parent 1: ${(profile as Student).parentOne}`
+        : "";
+    const parentTwo =
+      sheetName === "Students"
+        ? `Parent 2: ${(profile as Student).parentTwo}`
+        : "";
 
     return [
       email,
@@ -93,16 +117,25 @@ export const ProfileViewModal = ({
           <CardTitle>
             {sheetName === "Students"
               ? (profile as Student).studentName
-              : `${(profile as StaffMember).firstName} ${(profile as StaffMember).lastName}`}
+              : `${(profile as StaffMember).firstName} ${
+                  (profile as StaffMember).lastName
+                }`}
           </CardTitle>
           <CardDescription>{profile.school}</CardDescription>
         </CardHeader>
         <CardContent>
           <>
             <p>Email: {profile.email}</p>
-            <p>Phone: {sheetName === "Students" ? (profile as Student).phoneOne : (profile as StaffMember).phone}</p>
+            <p>
+              Phone:{" "}
+              {sheetName === "Students"
+                ? (profile as Student).phoneOne
+                : (profile as StaffMember).phone}
+            </p>
             <p>School: {profile.school}</p>
-            {sheetName === "Staff" && <p>Availability: {(profile as StaffMember).availability}</p>}
+            {sheetName === "Staff" && (
+              <p>Availability: {(profile as StaffMember).availability}</p>
+            )}
             {sheetName === "Students" && (
               <>
                 <p>Weekly Schedule: {(profile as Student).weeklySchedule}</p>
@@ -119,7 +152,10 @@ export const ProfileViewModal = ({
             <Button variant="outline" onClick={handleEditClick}>
               Edit
             </Button>
-            <Button variant="destructive" onClick={() => navigate('/profile/delete', { state: { profile, sheetName } })}>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteClick}
+            >
               Delete
             </Button>
             <Button onClick={onClose}>Close</Button>

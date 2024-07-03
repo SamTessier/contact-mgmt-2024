@@ -1,7 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
 const process = require('process');
-const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
 const dotenv = require('dotenv');
 
@@ -12,59 +11,22 @@ const SCOPES = [
   'https://www.googleapis.com/auth/drive',
 ];
 
-const TOKEN_PATH = path.join(process.cwd(), process.env.TOKEN_PATH || 'token.json');
-const CREDENTIALS_PATH = path.join(process.cwd(), process.env.CREDENTIALS_PATH || 'credentials.json');
+// Ensure the environment variable is set
+const credentialsPath = path.resolve(__dirname, process.env.GOOGLE_APPLICATION_CREDENTIALS || 'credentials.json');
+process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
 
 /**
- * Reads previously authorized credentials from the save file.
+ * Load service account credentials.
  *
- * @return {Promise<OAuth2Client|null>}
- */
-async function loadSavedCredentialsIfExist() {
-  try {
-    const content = await fs.readFile(TOKEN_PATH);
-    const credentials = JSON.parse(content);
-    return google.auth.fromJSON(credentials);
-  } catch (err) {
-    return null;
-  }
-}
-
-/**
- * Serializes credentials to a file compatible with GoogleAuth.fromJSON.
- *
- * @param {OAuth2Client} client
- * @return {Promise<void>}
- */
-async function saveCredentials(client) {
-  const content = await fs.readFile(CREDENTIALS_PATH);
-  const keys = JSON.parse(content);
-  const key = keys.installed || keys.web;
-  const payload = JSON.stringify({
-    type: 'authorized_user',
-    client_id: key.client_id,
-    client_secret: key.client_secret,
-    refresh_token: client.credentials.refresh_token,
-  });
-  await fs.writeFile(TOKEN_PATH, payload);
-}
-
-/**
- * Load or request authorization to call APIs.
+ * @return {Promise<OAuth2Client>}
  */
 async function authorize() {
-  let client = await loadSavedCredentialsIfExist();
-  if (client) {
-    return client;
-  }
-  client = await authenticate({
+  const auth = new google.auth.GoogleAuth({
+    keyFilename: credentialsPath,
     scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
   });
-  if (client.credentials) {
-    await saveCredentials(client);
-  }
-  return client;
+
+  return google.auth.getClient(auth);
 }
 
 module.exports = { authorize };

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
-import { authorize, getData } from "./sheets.server";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStaffColumns } from "./columns";
 import { Button } from "@/components/ui/button";
+import initializedDataLayer from "../data/initializedatalayer.server";
+
 
 export async function loader() {
-  const client = await authorize();
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
-  const data = await getData(client, spreadsheetId);
+  const { default: initializedDataLayer } = await import("../data/initializedatalayer.server");
+  const data = await initializedDataLayer.getData();
   return data;
 }
 

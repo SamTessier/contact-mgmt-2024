@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useLoaderData } from "@remix-run/react";
-import { authorize, getData } from "./sheets.server";
 import { DataTable } from "@/components/ui/data-table";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getAccountingColumns } from "./columns";
 import { useSelectedMonth } from "context/selectedMonthContext";
+import initializedDataLayer from "../data/initializedatalayer.server";
+
 
 export async function loader() {
-  const client = await authorize();
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
-  const data = await getData(client, spreadsheetId);
+  const { default: initializedDataLayer } = await import("../data/initializedatalayer.server");
+  const data = await initializedDataLayer.getData();
   return data;
 }
 
