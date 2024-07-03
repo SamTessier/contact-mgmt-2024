@@ -12,17 +12,21 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const auth = await authorize();
-  const user = await addUser(auth, { email, password });
+  const userAdded = await addUser(auth, { email, password });
 
-  if (!user) {
+  if (!userAdded) {
     return json({ error: "User already exists" }, { status: 400 });
   }
 
   return redirect("/login");
 };
 
+type ActionData = {
+  error?: string;
+};
+
 export default function Signup() {
-  const actionData = useActionData();
+  const actionData = useActionData<ActionData>();
   return (
     <div>
       <h2>Signup</h2>

@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
+import { LoaderFunction } from "@remix-run/node";
+import { requireUser } from "@/lib/utils";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
-import initializedDataLayer from "../data/initializedatalayer.server";
 
-
-export async function loader() {
+export const loader: LoaderFunction = async (args) => {
+  const user = await requireUser(args); 
   const { default: initializedDataLayer } = await import("../data/initializedatalayer.server");
   const data = await initializedDataLayer.getData();
-  return data;
-}
+  return { ...data, user };
+};
 
 export default function Students() {
   const { students } = useLoaderData();

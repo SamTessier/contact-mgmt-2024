@@ -12,7 +12,7 @@ export async function authorize() {
   return auth.getClient();
 }
 
-export async function addUser(auth: any, user: { email: string, password: string }) {
+export async function addUser(auth: any, user: { email: string, password: string }): Promise<boolean> {
   const sheets = google.sheets({ version: 'v4', auth });
   const spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
   const range = 'Users!A2:B';
@@ -27,7 +27,7 @@ export async function addUser(auth: any, user: { email: string, password: string
 
   const emails = res.data.values?.map(row => row[0]);
   if (emails?.includes(user.email)) {
-    throw new Error('User already exists');
+    return false;
   }
 
   await sheets.spreadsheets.values.append({
@@ -40,6 +40,8 @@ export async function addUser(auth: any, user: { email: string, password: string
       ],
     },
   });
+
+  return true;
 }
 
 export async function authenticateUser(auth: any, user: { email: string, password: string }) {

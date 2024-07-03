@@ -1,10 +1,3 @@
-
-/**
- * By default, Remix will handle generating the HTTP Response for you.
- * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
- * For more information, see https://remix.run/file-conventions/entry.server
- */
-
 import { PassThrough } from "node:stream";
 import express from "express";
 import type { AppLoadContext, EntryContext } from "@remix-run/node";
@@ -12,8 +5,11 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-import connection from "./config/db";
 import { createRequestHandler } from "@remix-run/express";
+import session from "express-session";
+import { GoogleSheetsStore } from "./googleSheetsSessionStore";
+import { authorize } from "./auth";
+import connection from "./config/db";
 
 const ABORT_DELAY = 5_000;
 
@@ -21,6 +17,16 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 app.use(express.json());
+
+app.use(
+  session({
+    store: new GoogleSheetsStore(authorize, process.env.GOOGLE_SHEETS_ID!),
+    secret: process.env.SESSION_SECRET || "default_secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === "production" },
+  })
+);
 
 app.get("/test-db", async (req, res) => {
   try {
@@ -35,7 +41,6 @@ app.use(
   "*",
   createRequestHandler({
     getLoadContext() {
-      // Whatever you return here will be passed as `context` to your loaders.
       return {};
     },
     getDocumentRequestHandler(options) {
@@ -59,9 +64,6 @@ export default function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
-  // This is ignored so we can keep it in the template for visibility.  Feel
-  // free to delete this parameter in your app if you're not using it!
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: AppLoadContext
 ) {
   return isbot(request.headers.get("user-agent"))
@@ -115,9 +117,6 @@ function handleBotRequest(
         },
         onError(error: unknown) {
           responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
           if (shellRendered) {
             console.error(error);
           }
@@ -165,9 +164,6 @@ function handleBrowserRequest(
         },
         onError(error: unknown) {
           responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
           if (shellRendered) {
             console.error(error);
           }

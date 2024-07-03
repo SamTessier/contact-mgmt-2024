@@ -1,3 +1,5 @@
+import { LoaderFunction, redirect } from "@remix-run/node";
+import { getSession } from "app/session.server";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { eachDayOfInterval, startOfMonth, endOfMonth, format } from 'date-fns';
@@ -56,4 +58,14 @@ export const calculateMonthlyRate = (availability: string, weekdayCounts: { M: n
   return totalMonthlyRate;
 }
 
-// END OF BILLING TOOL //
+// Function to require user authentication
+export const requireUser: LoaderFunction = async ({ request }) => {
+  const session = await getSession(request.headers.get("Cookie"));
+  const user = session.get("user");
+
+  if (!user) {
+    throw redirect("/login");
+  }
+
+  return user;
+};
