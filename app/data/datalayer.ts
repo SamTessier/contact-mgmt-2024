@@ -3,11 +3,11 @@ export class DataLayer {
       throw new Error("getData() not implemented");
     }
   
-    async addData(data) {
+    async addData() {
       throw new Error("addData() not implemented");
     }
   
-    async deleteData(id) {
+    async deleteData() {
       throw new Error("deleteData() not implemented");
     }
   }

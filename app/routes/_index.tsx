@@ -11,8 +11,6 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-// remix loader function that redirects to /students
-
 export function loader() {
   return redirect("/students");
 }

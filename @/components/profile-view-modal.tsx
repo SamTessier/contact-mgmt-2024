@@ -61,7 +61,7 @@ export const ProfileViewModal = ({
   if (!isOpen || !profile) return null;
 
   const handleEditClick = () => {
-    navigate("/profile/edit", { state: { profile, sheetName } });
+    navigate(`/${sheetName}/edit?email=${profile.email}`);
   };
 
   const handleDeleteClick = () => {
