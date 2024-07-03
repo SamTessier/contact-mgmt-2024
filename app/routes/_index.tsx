@@ -1,7 +1,12 @@
 import { MetaFunction, redirect } from "@remix-run/node";
 import { NavLink, Outlet } from "@remix-run/react";
 import { useSelectedMonth } from "context/selectedMonthContext";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
 export const meta: MetaFunction = () => {
@@ -30,15 +35,15 @@ export default function Index() {
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
         <h1 className="text-4xl font-bold p-8 uppercase">School App</h1>
 
-        <div className="mb-4">
+        <div className="flex justify-center mb-4">
           <NavLink to="/students" className="mr-4">
-            <Button variant="outline">Students</Button>
+            <Button className="button-style">Students</Button>
           </NavLink>
           <NavLink to="/staff" className="mr-4">
-            <Button variant="outline">Staff</Button>
+            <Button className="button-style">Staff</Button>
           </NavLink>
           <NavLink to="/accounting" className="mr-4">
-            <Button variant="outline">Accounting</Button>
+            <Button className="button-style">Accounting</Button>
           </NavLink>
         </div>
 

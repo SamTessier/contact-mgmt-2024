@@ -8,7 +8,7 @@ import { renderToPipeableStream } from "react-dom/server";
 import { createRequestHandler } from "@remix-run/express";
 import session from "express-session";
 import { GoogleSheetsStore } from "./googleSheetsSessionStore";
-import { authorize } from "./auth";
+import { authorize } from "./googlesheetsserver";
 import connection from "./config/db";
 
 const ABORT_DELAY = 5_000;

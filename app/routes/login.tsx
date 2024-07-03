@@ -1,6 +1,8 @@
 import { ActionFunction, json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { authorize, authenticateUser } from "../auth";
+import { authenticateUser } from "app/auth";
+import { createSession, authorize } from "../googlesheetsserver";
+import { commitSession, getSession } from "../session.server";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -18,26 +20,41 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ error: "Invalid credentials" }, { status: 400 });
   }
 
-  return redirect("/");
+  const session = await getSession(request.headers.get("Cookie"));
+  const sessionId = await createSession(auth, user.email, { email: user.email });
+
+  session.set("sessionId", sessionId);
+
+  return redirect("/students", {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
+};
+
+type ActionData = {
+  error?: string;
 };
 
 export default function Login() {
-  const actionData = useActionData();
+  const actionData = useActionData<ActionData>();
   return (
-    <div>
-      <h2>Login</h2>
-      <Form method="post">
-        <div>
-          <label htmlFor="email">Email</label>
-          <input type="email" name="email" id="email" required />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input type="password" name="password" id="password" required />
-        </div>
-        {actionData?.error && <p>{actionData.error}</p>}
-        <button type="submit">Login</button>
-      </Form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
+        <Form method="post">
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" name="email" id="email" required className="mt-1 p-2 block w-full border border-gray-300 rounded-md" />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <input type="password" name="password" id="password" required className="mt-1 p-2 block w-full border border-gray-300 rounded-md" />
+          </div>
+          {actionData?.error && <p className="text-red-500">{actionData.error}</p>}
+          <button type="submit" className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700">Login</button>
+        </Form>
+      </div>
     </div>
   );
 }

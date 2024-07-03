@@ -1,6 +1,7 @@
 import { ActionFunction, json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { authorize, addUser } from "../auth";
+import {  addUser, authenticateUser } from "app/auth";
+import { createSession, authorize } from "../googlesheetsserver";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -12,13 +13,18 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const auth = await authorize();
-  const userAdded = await addUser(auth, { email, password });
-
-  if (!userAdded) {
+  try {
+    await addUser(auth, { email, password });
+  } catch (error) {
     return json({ error: "User already exists" }, { status: 400 });
   }
 
-  return redirect("/login");
+  const user = await authenticateUser(auth, { email, password });
+  const sessionId = await createSession(auth, user.email, { email: user.email });
+  const headers = new Headers();
+  headers.append("Set-Cookie", `session=${sessionId}; HttpOnly; Path=/`);
+
+  return redirect("/students", { headers });
 };
 
 type ActionData = {

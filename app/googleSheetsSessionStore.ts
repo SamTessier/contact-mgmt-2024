@@ -17,7 +17,7 @@ export class GoogleSheetsStore extends session.Store {
       const sheets = google.sheets({ version: 'v4', auth });
       const res = await sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: `Sessions!A2:C`,
+        range: `Sessions!A2:D`,
       });
 
       const rows = res.data.values || [];
@@ -49,7 +49,7 @@ export class GoogleSheetsStore extends session.Store {
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: `Sessions!A2:C`,
+        range: `Sessions!A2:D`,
         valueInputOption: 'RAW',
         requestBody: {
           values: [[sid, sessionData, expires]],
@@ -68,7 +68,7 @@ export class GoogleSheetsStore extends session.Store {
       const sheets = google.sheets({ version: 'v4', auth });
       const res = await sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: `Sessions!A2:C`,
+        range: `Sessions!A2:D`,
       });
 
       const rows = res.data.values || [];
@@ -78,12 +78,12 @@ export class GoogleSheetsStore extends session.Store {
         return callback && callback(null);
       }
 
-      const range = `Sessions!A${sessionRowIndex + 2}:C${sessionRowIndex + 2}`;
+      const range = `Sessions!A${sessionRowIndex + 2}:D${sessionRowIndex + 2}`;
       await sheets.spreadsheets.values.update({
         spreadsheetId,
         range,
         valueInputOption: 'RAW',
-        requestBody: { values: [['', '', '']] },
+        requestBody: { values: [['', '', '', '']] },
       });
 
       callback && callback(null);

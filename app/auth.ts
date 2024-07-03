@@ -1,24 +1,16 @@
 import { google } from 'googleapis';
 import bcrypt from 'bcrypt';
-import path from 'path';
+import { getUser, createSession, authorize } from "./googlesheetsserver";
+import { commitSession, getSession } from "./session.server";
+import { redirect } from "@remix-run/node";
 
-const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS ? path.resolve(process.env.GOOGLE_APPLICATION_CREDENTIALS) : '';
-
-export async function authorize() {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: credentialsPath,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'],
-  });
-  return auth.getClient();
-}
-
-export async function addUser(auth: any, user: { email: string, password: string }): Promise<boolean> {
+export async function addUser(auth: any, user: { email: string, password: string }) {
   const sheets = google.sheets({ version: 'v4', auth });
   const spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
   const range = 'Users!A2:B';
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(user.password, salt);
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(user.password, salt);
 
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
@@ -27,7 +19,7 @@ export async function addUser(auth: any, user: { email: string, password: string
 
   const emails = res.data.values?.map(row => row[0]);
   if (emails?.includes(user.email)) {
-    return false;
+    throw new Error('User already exists');
   }
 
   await sheets.spreadsheets.values.append({
@@ -40,26 +32,39 @@ export async function addUser(auth: any, user: { email: string, password: string
       ],
     },
   });
-
-  return true;
 }
 
-export async function authenticateUser(auth: any, user: { email: string, password: string }) {
-  const sheets = google.sheets({ version: 'v4', auth });
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
-  const range = 'Users!A2:B';
+export async function authenticateUser(auth: any, { email, password }: { email: string, password: string }) {
+  const user = await getUser(auth, email);
+  if (user && bcrypt.compareSync(password, user.password)) {
+    return user;
+  }
+  return null;
+}
 
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId,
-    range,
-  });
+export async function loginUser({ request }: { request: Request }) {
+  const formData = await request.formData();
+  const email = formData.get("email")?.toString();
+  const password = formData.get("password")?.toString();
 
-  const rows = res.data.values || [];
-  const foundUser = rows.find(row => row[0] === user.email);
-
-  if (!foundUser || !await bcrypt.compare(user.password, foundUser[1])) {
-    return null;
+  if (!email || !password) {
+    return { error: "Email and password are required" };
   }
 
-  return user;
+  const auth = await authorize();
+  const user = await authenticateUser(auth, { email, password });
+
+  if (user) {
+    const session = await getSession(request.headers.get("Cookie"));
+    const sessionId = await createSession(auth, user.email, { userId: user.email });
+
+    session.set("sessionId", sessionId);
+    return redirect("/students", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  } else {
+    return { error: "Invalid credentials" };
+  }
 }

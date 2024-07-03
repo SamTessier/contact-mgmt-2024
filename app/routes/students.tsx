@@ -7,13 +7,20 @@ import { Input } from "@/components/ui/input";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
+import { authorize, getData } from "app/googlesheetsserver";
 
-export const loader: LoaderFunction = async (args) => {
-  const user = await requireUser(args); 
-  const { default: initializedDataLayer } = await import("../data/initializedatalayer.server");
-  const data = await initializedDataLayer.getData();
-  return { ...data, user };
-};
+export const loader: LoaderFunction = async ({ request, params }) => {
+  const session = await requireUser({ request, params });
+  
+  const auth = await authorize();
+  const sheetId = process.env.GOOGLE_SHEETS_ID;
+  if (!sheetId) {
+    throw new Error("GOOGLE_SHEETS_ID environment variable is not set.");
+  }
+  const { students } = await getData(auth, sheetId, "Students");
+  
+  return { students, session };
+}
 
 export default function Students() {
   const { students } = useLoaderData();
