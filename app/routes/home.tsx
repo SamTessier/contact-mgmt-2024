@@ -3,6 +3,7 @@ import { LoaderFunction, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { calculateRatios } from '@/lib/utils';
 import { authorize, getData } from '../googlesheetsserver';
+import { DatePicker } from '@/components/ui/date-picker'; 
 
 export const loader: LoaderFunction = async () => {
   const auth = await authorize();
@@ -16,7 +17,7 @@ export const loader: LoaderFunction = async () => {
 
 const Chart = React.lazy(() => import('react-charts').then((mod) => ({ default: mod.Chart })));
 
-const StaffStudentRatioChart = ({ staff, students, day }: { staff: any[], students: any[], day: string }) => {
+const StaffStudentRatioChart = ({ staff, students, day }) => {
   const data = React.useMemo(() => {
     const ratios = calculateRatios(staff, students, day);
     return [
@@ -32,7 +33,7 @@ const StaffStudentRatioChart = ({ staff, students, day }: { staff: any[], studen
 
   const primaryAxis = React.useMemo(
     () => ({
-      getValue: (datum: any) => datum.school,
+      getValue: (datum) => datum.school,
     }),
     []
   );
@@ -40,12 +41,19 @@ const StaffStudentRatioChart = ({ staff, students, day }: { staff: any[], studen
   const secondaryAxes = React.useMemo(
     () => [
       {
-        getValue: (datum: any) => datum.ratio,
+        getValue: (datum) => datum.ratio,
         elementType: 'bar',
       },
     ],
     []
   );
+
+  const getColor = (ratio) => {
+    if (ratio >= 16) return 'darkred'; // Way too many students per staff
+    if (ratio >= 8) return 'green';
+    if (ratio >= 4) return 'orange';
+    return 'red';
+  };
 
   return (
     <div style={{ width: '100%', height: '300px' }}>
@@ -55,6 +63,9 @@ const StaffStudentRatioChart = ({ staff, students, day }: { staff: any[], studen
             data,
             primaryAxis,
             secondaryAxes,
+            getSeriesStyle: (series) => ({
+              fill: series.datums.map((datum) => getColor(datum.originalDatum.ratio)),
+            }),
           }}
         />
       </Suspense>
@@ -66,20 +77,15 @@ const HomePage = () => {
   const { staff, students } = useLoaderData();
   const [day, setDay] = useState('M'); // Default to Monday
 
+  const handleDateSelect = (selectedDay: string) => {
+    setDay(selectedDay);
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-      <div className="mb-4">
-        <label htmlFor="day-select" className="block text-sm font-medium text-gray-700">
-          Select Day:
-        </label>
-        <select id="day-select" value={day} onChange={(e) => setDay(e.target.value)} className="mt-1 p-2 block w-full border border-gray-300 rounded-md">
-          <option value="M">Monday</option>
-          <option value="T">Tuesday</option>
-          <option value="W">Wednesday</option>
-          <option value="TH">Thursday</option>
-          <option value="F">Friday</option>
-        </select>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <DatePicker onDateSelect={handleDateSelect} />
       </div>
       <StaffStudentRatioChart staff={staff} students={students} day={day} />
     </div>

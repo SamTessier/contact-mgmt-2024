@@ -92,37 +92,14 @@ export const requireUser: LoaderFunction = async ({ request, params, context }) 
   return session;
 };
 
-// Function to calculate staff/student ratios
-export const calculateRatios = (
-  staff: any[],
-  students: any[],
-  day: string
-) => {
-  const schoolStats: {
-    [key: string]: { staffCount: number; studentCount: number };
-  } = {};
-
-  staff.forEach(({ school, availability }) => {
-    if (availability.includes(day)) {
-      if (!schoolStats[school])
-        schoolStats[school] = { staffCount: 0, studentCount: 0 };
-      schoolStats[school].staffCount++;
-    }
+export const calculateRatios = (staff, students, day) => {
+  const schools = new Set(staff.map((s) => s.school).concat(students.map((s) => s.school)));
+  
+  return Array.from(schools).map((school) => {
+    const staffCount = staff.filter((s) => s.school === school && s.availability.includes(day)).length;
+    const studentCount = students.filter((s) => s.school === school && s.weeklySchedule.includes(day)).length;
+    const ratio = studentCount === 0 ? 0 : staffCount / studentCount;
+    return { school, ratio };
   });
-
-  students.forEach(({ school, weeklySchedule }) => {
-    if (weeklySchedule.includes(day)) {
-      if (!schoolStats[school])
-        schoolStats[school] = { staffCount: 0, studentCount: 0 };
-      schoolStats[school].studentCount++;
-    }
-  });
-
-  return Object.keys(schoolStats).map((school) => ({
-    school,
-    ratio:
-      schoolStats[school].staffCount > 0
-        ? schoolStats[school].studentCount / schoolStats[school].staffCount
-        : 0,
-  }));
 };
+

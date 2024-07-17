@@ -1,11 +1,10 @@
-import { ActionFunction, LoaderFunction, json } from "@remix-run/node";
-import { useNavigate, useParams, Form, Params } from "@remix-run/react";
+import { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { useNavigate, useParams, Form } from "@remix-run/react";
+import { staffStudentDataLayer } from '~/data/initializedatalayer.server';
 import invariant from "tiny-invariant";
-import initializedDataLayer from "../data/initializedatalayer.server";
 
-const sheetNameFromParams = (params: Params<string>) => {
+const sheetNameFromParams = (params) => {
   let sheetName = params.sheetName;
-  console.log("Params:", params);
   invariant(sheetName, "Missing sheet name");
   sheetName = sheetName.toLowerCase();
   sheetName = sheetName.charAt(0).toUpperCase() + sheetName.slice(1);
@@ -24,13 +23,10 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const formData = await request.formData();
   const data = Object.fromEntries(formData.entries());
+  const email = formData.get("email");
 
-  try {
-    await initializedDataLayer.updateData(data, data.email);
-    return json({ success: true });
-  } catch (error) {
-    return json({ error: "Failed to update data", details: error });
-  }
+  await staffStudentDataLayer.updateData(data, email.toString(), sheetName);
+  return redirect(`/${sheetName}`);
 };
 
 export default function ProfileEditPage() {
@@ -69,7 +65,7 @@ export default function ProfileEditPage() {
           </>
         )}
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
-        <button onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+        <button type="button" onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
       </Form>
     </div>
   );

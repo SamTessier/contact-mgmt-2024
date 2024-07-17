@@ -17,7 +17,7 @@ export const meta: MetaFunction = () => {
 };
 
 export function loader() {
-  return redirect("/students");
+  return redirect("/home");
 }
 
 export default function Index() {

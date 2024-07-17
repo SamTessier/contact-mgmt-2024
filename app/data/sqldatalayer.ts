@@ -1,56 +1,41 @@
 import { DataLayer } from './datalayer';
+import connection from '../config/db';
 
-class SQLDataLayer extends DataLayer {
+class SQLDataLayer implements DataLayer {
   private async getConnection() {
     if (typeof window !== 'undefined') {
       throw new Error('This method should only be called on the server');
     }
-    const { default: connection } = await import('../config/db');
     return connection;
   }
 
-  async getData() {
+  async getData(sheetName: string) {
     const connection = await this.getConnection();
-    const result = await new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM your_table', (error, results) => {
-        if (error) return reject(error);
-        resolve(results);
-      });
-    });
-    return result;
+    const [results] = await connection.query(`SELECT * FROM ${sheetName}`);
+    return results;
   }
 
-  async addData(data: { value1: any, value2: any }) {
+  async addData(data: any, sheetName: string) {
     const connection = await this.getConnection();
-    const result = await new Promise((resolve, reject) => {
-      connection.query('INSERT INTO your_table (column1, column2) VALUES (?, ?)', [data.value1, data.value2], (error, results) => {
-        if (error) return reject(error);
-        resolve(results);
-      });
-    });
-    return result;
+    const placeholders = Object.keys(data).map(() => '?').join(', ');
+    const columns = Object.keys(data).join(', ');
+    const values = Object.values(data);
+    const query = `INSERT INTO ${sheetName} (${columns}) VALUES (${placeholders})`;
+    await connection.query(query, values);
   }
 
-  async updateData(data: { value1: any, value2: any }, id: number) {
+  async updateData(data: any, email: string, sheetName: string) {
     const connection = await this.getConnection();
-    const result = await new Promise((resolve, reject) => {
-      connection.query('UPDATE your_table SET column1 = ?, column2 = ? WHERE id = ?', [data.value1, data.value2, id], (error, results) => {
-        if (error) return reject(error);
-        resolve(results);
-      });
-    });
-    return result;
+    const setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
+    const values = [...Object.values(data), email];
+    const query = `UPDATE ${sheetName} SET ${setClause} WHERE email = ?`;
+    await connection.query(query, values);
   }
 
-  async deleteData(id: number) {
+  async deleteData(email: string, sheetName: string) {
     const connection = await this.getConnection();
-    const result = await new Promise((resolve, reject) => {
-      connection.query('DELETE FROM your_table WHERE id = ?', [id], (error, results) => {
-        if (error) return reject(error);
-        resolve(results);
-      });
-    });
-    return result;
+    const query = `DELETE FROM ${sheetName} WHERE email = ?`;
+    await connection.query(query, [email]);
   }
 }
 

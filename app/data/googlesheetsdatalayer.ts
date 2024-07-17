@@ -1,67 +1,39 @@
-import { DataLayer } from "./datalayer";
 
-class GoogleSheetsDataLayer extends DataLayer {
+import { DataLayer } from './datalayer';
+import { authorize, getData as gsGetData, addData as gsAddData, updateData as gsUpdateData, deleteData as gsDeleteData } from '../googlesheetsserver';
+
+class GoogleSheetsDataLayer implements DataLayer {
   private authClient: any;
 
-  constructor(
-    private spreadsheetId: string,
-    private sheetName: string,
-    private credentialsPath: string
-  ) {
-    super();
+  constructor(private spreadsheetId: string, private credentialsPath: string) {
     this.authClient = null;
   }
 
   private async authenticate() {
-    if (typeof window !== 'undefined') {
-      throw new Error('This method should only be called on the server');
-    }
-
     if (!this.authClient) {
-      const { authorize } = await import('../googlesheetsserver');
       this.authClient = await authorize(this.credentialsPath);
     }
     return this.authClient;
   }
 
-  async getData() {
-    if (typeof window !== 'undefined') {
-      throw new Error('This method should only be called on the server');
-    }
-
+  async getData(sheetName: string) {
     const auth = await this.authenticate();
-    const { getData } = await import('../googlesheetsserver');
-    return getData(auth, this.spreadsheetId, this.sheetName);
+    return gsGetData(auth, this.spreadsheetId, sheetName);
   }
 
-  async addData(data: { [key: string]: any }) {
-    if (typeof window !== 'undefined') {
-      throw new Error('This method should only be called on the server');
-    }
-
+  async addData(data: any, sheetName: string) {
     const auth = await this.authenticate();
-    const { addData } = await import('../googlesheetsserver');
-    await addData(auth, this.spreadsheetId, data, this.sheetName);
+    await gsAddData(auth, this.spreadsheetId, data, sheetName);
   }
 
-  async updateData(data: { [key: string]: any }, email: string) {
-    if (typeof window !== 'undefined') {
-      throw new Error('This method should only be called on the server');
-    }
-
+  async updateData(data: any, email: string, sheetName: string) {
     const auth = await this.authenticate();
-    const { updateData } = await import('../googlesheetsserver');
-    await updateData(auth, this.spreadsheetId, data, this.sheetName, email);
+    await gsUpdateData(auth, this.spreadsheetId, data, sheetName, email);
   }
 
-  async deleteData(email: string) {
-    if (typeof window !== 'undefined') {
-      throw new Error('This method should only be called on the server');
-    }
-
+  async deleteData(email: string, sheetName: string) {
     const auth = await this.authenticate();
-    const { deleteData } = await import('../googlesheetsserver');
-    await deleteData(auth, this.spreadsheetId, email, this.sheetName);
+    await gsDeleteData(auth, this.spreadsheetId, email, sheetName);
   }
 }
 

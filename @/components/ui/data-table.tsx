@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   SortingState,
 } from "@tanstack/react-table";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   Table,
   TableBody,
@@ -38,6 +39,15 @@ export function DataTable<TData, TValue>({
       sorting,
     },
     onSortingChange: setSorting,
+  });
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: table.getRowModel().rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+    overscan: 10,
   });
 
   return (
@@ -70,38 +80,49 @@ export function DataTable<TData, TValue>({
               </TableHeader>
             </Table>
           </div>
-          <div className="table-body">
+          <div
+            ref={parentRef}
+            className="table-body"
+            style={{ height: "600px", overflow: "auto" }}
+          >
             <Table>
               <TableBody>
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className="bg-white divide-y divide-gray-200 table-row"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 overflow-clip fixed-width truncate"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center overflow-clip text-sm text-gray-500 fixed-width truncate"
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
+                <div
+                  style={{
+                    height: `${virtualizer.getTotalSize()}px`,
+                    position: "relative",
+                  }}
+                >
+                  {virtualizer.getVirtualItems().map((virtualRow) => {
+                    const row = table.getRowModel().rows[virtualRow.index];
+                    return (
+                      <TableRow
+                        key={row.id}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          transform: `translateY(${virtualRow.start}px)`,
+                          height: `${virtualRow.size}px`,
+                        }}
+                        className="bg-white divide-y divide-gray-200 table-row"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell
+                            key={cell.id}
+                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 overflow-clip fixed-width truncate"
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
+                </div>
               </TableBody>
             </Table>
           </div>

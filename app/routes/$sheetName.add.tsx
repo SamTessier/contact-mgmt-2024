@@ -1,6 +1,6 @@
 import { ActionFunction, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { authorize, addData } from "../googlesheetsserver"
+import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 
 export const action: ActionFunction = async ({ request }) => {
   const url = new URL(request.url);
@@ -9,12 +9,8 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
-  console.log("Parsed data:", data); // Debugging log
-  console.log("Sheet name:", sheetName); // Debugging log
-
-  const auth = await authorize('credentials.json');
-  await addData(auth, process.env.GOOGLE_SHEETS_ID!, data, sheetName);
-  return redirect("${sheetName}");
+  await staffStudentDataLayer.addData(data, sheetName);
+  return redirect(`/${sheetName}`);
 };
 
 export default function ProfileAddPage() {

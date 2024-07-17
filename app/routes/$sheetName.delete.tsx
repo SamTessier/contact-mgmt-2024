@@ -1,6 +1,6 @@
 import { ActionFunction, redirect } from "@remix-run/node";
 import { Form, useNavigate, useParams } from "@remix-run/react";
-import { authorize, deleteData } from "../googlesheetsserver";
+import { staffStudentDataLayer } from '~/data/initializedatalayer.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const url = new URL(request.url);
@@ -13,11 +13,7 @@ export const action: ActionFunction = async ({ request }) => {
     throw new Error("Email and sheet name are required");
   }
 
-  console.log("Parsed data:", { email, sheetName }); // Debugging log
-  console.log("Sheet name:", sheetName); // Debugging log
-
-  const auth = await authorize('credentials.json');
-  await deleteData(auth, process.env.GOOGLE_SHEETS_ID!, email.toString(), sheetName);
+  await staffStudentDataLayer.deleteData(email.toString(), sheetName);
   return redirect(`/${sheetName}`);
 };
 

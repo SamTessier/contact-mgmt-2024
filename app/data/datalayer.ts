@@ -1,14 +1,6 @@
-export class DataLayer {
-    async getData() {
-      throw new Error("getData() not implemented");
-    }
-  
-    async addData() {
-      throw new Error("addData() not implemented");
-    }
-  
-    async deleteData() {
-      throw new Error("deleteData() not implemented");
-    }
-  }
-  
+export interface DataLayer {
+  getData(sheetName: string): Promise<any>;
+  addData(data: any, sheetName: string): Promise<void>;
+  updateData(data: any, email: string, sheetName: string): Promise<void>;
+  deleteData(email: string, sheetName: string): Promise<void>;
+}

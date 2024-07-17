@@ -1,8 +1,7 @@
 import { ActionFunction, json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import { authenticateUser } from "app/auth";
-import { createSession, authorize } from "../googlesheetsserver";
-import { commitSession, getSession } from "../session.server";
+import { authenticateUser } from "../auth";
+import { getSession, commitSession } from "app/session.server";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -13,17 +12,14 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ error: "Email and password are required" }, { status: 400 });
   }
 
-  const auth = await authorize();
-  const user = await authenticateUser(auth, { email, password });
+  const user = await authenticateUser({ email, password });
 
   if (!user) {
     return json({ error: "Invalid credentials" }, { status: 400 });
   }
 
   const session = await getSession(request.headers.get("Cookie"));
-  const sessionId = await createSession(auth, user.email, { email: user.email });
-
-  session.set("sessionId", sessionId);
+  session.set("userId", user.id);
 
   return redirect("/students", {
     headers: {
