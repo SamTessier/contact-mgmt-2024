@@ -1,18 +1,10 @@
-import queryAsync from 'app/config/db';
-import bcrypt from 'bcrypt';
+import pool from './config/db';
 
 const tablesCreationQueries = [
-  `CREATE TABLE IF NOT EXISTS roles (
-    role_name VARCHAR(10) PRIMARY KEY
-  );`,
-  `INSERT IGNORE INTO roles (role_name) VALUES ('admin'), ('manager'), ('staff');`,
   `CREATE TABLE IF NOT EXISTS users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) UNIQUE,
-    email VARCHAR(255) UNIQUE,
-    password_hash TEXT,
-    role_name VARCHAR(10),
-    FOREIGN KEY (role_name) REFERENCES roles(role_name)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100),
+    password_hash VARCHAR(100)
   );`,
   `CREATE TABLE IF NOT EXISTS staff (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,14 +30,21 @@ const tablesCreationQueries = [
 ];
 
 export const setupDb = async () => {
-  for (const query of tablesCreationQueries) {
-    try {
-      await queryAsync(query);
-      console.log("Database table created");
-    } catch (err) {
-      console.error("Error creating table:", err);
-      throw err;
+  const connection = await pool.getConnection();
+
+  try {
+    for (const query of tablesCreationQueries) {
+      try {
+        await connection.query(query);
+        console.log("Database table created");
+      } catch (err) {
+        console.error("Error creating table:", err);
+        throw err;
+      }
     }
+  } finally {
+    connection.release();
   }
 };
 
+setupDb().catch((err) => console.error("Error setting up database:", err));

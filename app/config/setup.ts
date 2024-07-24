@@ -1,8 +1,6 @@
-const fs = require('fs').promises;
-const path = require('path');
-const process = require('process');
-const { google } = require('googleapis');
-const dotenv = require('dotenv');
+import path from 'path';
+import { google } from 'googleapis';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -20,7 +18,7 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
  *
  * @return {Promise<OAuth2Client>}
  */
-async function authorize() {
+export async function authorize() {
   const auth = new google.auth.GoogleAuth({
     keyFilename: credentialsPath,
     scopes: SCOPES,
@@ -28,5 +26,3 @@ async function authorize() {
 
   return google.auth.getClient(auth);
 }
-
-module.exports = { authorize };

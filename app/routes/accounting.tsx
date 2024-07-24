@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getAccountingColumns } from "./columns";
 import { useSelectedMonth } from "context/selectedMonthContext";
-import initializedDataLayer from "../data/initializedatalayer.server";
+import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 
 
 export async function loader() {
-  const { default: initializedDataLayer } = await import("../data/initializedatalayer.server");
-  const data = await initializedDataLayer.getData();
+  const { default: staffStudentDataLayer } = await import("../data/initializedatalayer.server");
+  const data = await staffStudentDataLayer.getData();
   return data;
 }
 

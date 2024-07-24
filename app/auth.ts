@@ -5,9 +5,9 @@ export async function addUser({ email, password }: { email: string, password: st
   const hashedPassword = await bcrypt.hash(password, 10);
   return new Promise((resolve, reject) => {
     connection.query(
-      "INSERT INTO users (email, password_hash, role_name) VALUES (?, ?, 'user')",
+      "INSERT INTO users (email, password) VALUES (?, ?)",
       [email, hashedPassword],
-      (err) => {
+      (err: any) => {
         if (err) {
           if (err.code === 'ER_DUP_ENTRY') {
             return reject(new Error("User already exists"));

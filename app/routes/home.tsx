@@ -1,9 +1,11 @@
-import React, { useState, Suspense } from 'react';
-import { LoaderFunction, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { calculateRatios } from '@/lib/utils';
-import { authorize, getData } from '../googlesheetsserver';
-import { DatePicker } from '@/components/ui/date-picker'; 
+import React, { useState, Suspense } from "react";
+import { LoaderFunction, json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { calculateRatios } from "@/lib/utils";
+import { authorize, getData } from "../googlesheetsserver";
+import { DatePicker } from "@/components/ui/date-picker";
+import connection from "~/config/db";
+
 
 export const loader: LoaderFunction = async () => {
   const auth = await authorize();
@@ -12,7 +14,8 @@ export const loader: LoaderFunction = async () => {
     throw new Error("GOOGLE_SHEETS_ID environment variable is not set.");
   }
   const { staff, students } = await getData(auth, sheetId, "Data");
-  return json({ staff, students });
+  const results = await connection.query("SELECT 1 + 1 AS solution");
+  return json({ staff, students, results });
 };
 
 const Chart = React.lazy(() => import('react-charts').then((mod) => ({ default: mod.Chart })));
@@ -74,7 +77,7 @@ const StaffStudentRatioChart = ({ staff, students, day }) => {
 };
 
 const HomePage = () => {
-  const { staff, students } = useLoaderData();
+  const { staff, students, results } = useLoaderData();
   const [day, setDay] = useState('M'); // Default to Monday
 
   const handleDateSelect = (selectedDay: string) => {
@@ -83,6 +86,7 @@ const HomePage = () => {
 
   return (
     <div className="container mx-auto p-4">
+      {JSON.stringify(results)}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <DatePicker onDateSelect={handleDateSelect} />

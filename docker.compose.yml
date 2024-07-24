@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: Marty7399
+      MYSQL_DATABASE: mydb
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - contact_mgmt_db:/var/lib/mysql
+
+volumes:
+  contact_mgmt_db:

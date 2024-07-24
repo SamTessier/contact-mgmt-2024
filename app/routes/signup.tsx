@@ -19,6 +19,10 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await authenticateUser({ email, password });
+  if (!user) {
+    return json({ error: "Authentication failed" }, { status: 400 });
+  }
+
   const session = await getSession(request.headers.get("Cookie"));
   session.set("userId", user.id);
 
