@@ -9,29 +9,31 @@ class SQLDataLayer implements DataLayer {
     return connection;
   }
 
-  async getData() {
+  async getData(sheetName: string) {
     const connection = await this.getConnection();
-    const [students] = await connection.query(`SELECT * FROM students`);
-    const [staff] = await connection.query(`SELECT * FROM staff`);
-    return { students, staff };
+    if (!sheetName) {
+      throw new Error("Sheet name is undefined");
+    }
+    const [rows] = await connection.query(`SELECT * FROM ${sheetName}`);
+    return rows;
   }
 
   async addData(data: any, sheetName: string) {
     const connection = await this.getConnection();
-    const placeholders = Object.keys(data)
-      .map(() => "?")
-      .join(", ");
+    const placeholders = Object.keys(data).map(() => "?").join(", ");
     const columns = Object.keys(data).join(", ");
     const values = Object.values(data);
     const query = `INSERT INTO ${sheetName} (${columns}) VALUES (${placeholders})`;
+    console.log("Query:", query); // Debugging statement
+    console.log("Values:", values); // Debugging statement
     await connection.query(query, values);
+    console.log("Insert result:", result); // Debugging statement
+
   }
 
   async updateData(data: any, email: string, sheetName: string) {
     const connection = await this.getConnection();
-    const setClause = Object.keys(data)
-      .map((key) => `${key} = ?`)
-      .join(", ");
+    const setClause = Object.keys(data).map((key) => `${key} = ?`).join(", ");
     const values = [...Object.values(data), email];
     const query = `UPDATE ${sheetName} SET ${setClause} WHERE email = ?`;
     await connection.query(query, values);

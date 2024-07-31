@@ -18,28 +18,28 @@ const tablesCreationQueries = [
   `CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) UNIQUE,
-    password_hash VARCHAR(100)
+    password_hash VARCHAR(100) DEFAULT ''
   );`,
   `CREATE TABLE IF NOT EXISTS staff (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    firstName VARCHAR(100),
-    lastName VARCHAR(100),
-    school VARCHAR(100),
-    phone VARCHAR(50),
-    email VARCHAR(100),
-    availability TEXT
+    firstName VARCHAR(100) DEFAULT '',
+    lastName VARCHAR(100) DEFAULT '',
+    school VARCHAR(100) DEFAULT '',
+    phone VARCHAR(50) DEFAULT '',
+    email VARCHAR(100) DEFAULT '',
+    availability VARCHAR(100) DEFAULT ''
   );`,
   `CREATE TABLE IF NOT EXISTS students (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    school VARCHAR(100),
-    studentName VARCHAR(100),
-    weeklySchedule TEXT,
-    notes TEXT,
-    email VARCHAR(100),
-    phoneOne VARCHAR(50),
-    parentOne VARCHAR(100),
-    parentTwo VARCHAR(100),
-    phoneTwo VARCHAR(50)
+    school VARCHAR(100) DEFAULT '',
+    studentName VARCHAR(100) DEFAULT '',
+    weeklySchedule VARCHAR(100) DEFAULT '',
+    notes VARCHAR(100) DEFAULT '',
+    email VARCHAR(100) DEFAULT '',
+    phoneOne VARCHAR(50) DEFAULT '',
+    parentOne VARCHAR(100) DEFAULT '',
+    parentTwo VARCHAR(100) DEFAULT '',
+    phoneTwo VARCHAR(50) DEFAULT ''
   );`,
 ];
 

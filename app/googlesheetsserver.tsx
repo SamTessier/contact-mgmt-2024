@@ -1,6 +1,5 @@
 import { google } from 'googleapis';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 
 const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS ? path.resolve(process.env.GOOGLE_APPLICATION_CREDENTIALS) : '';
 process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
@@ -15,7 +14,7 @@ export async function authorize() {
 
 export async function getData(auth: any, spreadsheetId: string, sheetName: string) {
   const sheets = google.sheets({ version: 'v4', auth });
-
+  
   const staffHeaders = ['firstName', 'lastName', 'school', 'phone', 'email', 'availability'];
   const studentHeaders = ['school', 'studentName', 'weeklySchedule', 'notes', 'email', 'phoneOne', 'parentOne', 'parentTwo', 'phoneTwo'];
 
@@ -127,67 +126,4 @@ export async function deleteData(auth: any, spreadsheetId: string, email: string
   }
 }
 
-export async function createSession(auth: any, userId: string, sessionData: any) {
-  const sheets = google.sheets({ version: 'v4', auth });
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
-  const range = 'Sessions!A:D';
-  const sessionId = uuidv4();
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days from now
 
-  const values = [
-    [sessionId, userId, expires, JSON.stringify(sessionData)]
-  ];
-
-  await sheets.spreadsheets.values.append({
-    spreadsheetId,
-    range,
-    valueInputOption: 'USER_ENTERED',
-    resource: { values },
-  });
-
-  return sessionId;
-}
-
-export async function getUser(auth: any, email: string) {
-  const sheets = google.sheets({ version: 'v4', auth });
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
-  const range = 'Users!A2:B';
-
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId,
-    range,
-  });
-
-  const rows = res.data.values || [];
-  const userRow = rows.find(row => row[0] === email);
-
-  if (!userRow) {
-    return null;
-  }
-
-  const user = { email: userRow[0], password: userRow[1] };
-  return user;
-}
-
-export async function getSessionData(auth: any, sessionId: string) {
-  const sheets = google.sheets({ version: 'v4', auth });
-  const spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
-  const range = 'Sessions!A2:D';
-
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId,
-    range,
-  });
-
-  const rows = res.data.values || [];
-  const session = rows.find(row => row[0] === sessionId);
-
-  if (session) {
-    const [id, userId, expires, data] = session;
-    if (new Date(expires) > new Date()) {
-      return { sessionId: id, userId, expires, data: JSON.parse(data) };
-    }
-  }
-
-  return null;
-}

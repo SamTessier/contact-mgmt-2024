@@ -8,19 +8,33 @@ import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStaffColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "../data/initializedatalayer.server";
+import { useEffect } from "react";
 
 export const loader: LoaderFunction = async (args) => {
-  await requireUser(args);
-  const staff = staffStudentDataLayer.getData("staff");
-  return { staff };
+  try {
+    await requireUser(args);
+    const staff = staffStudentDataLayer.getData("staff");
+    return { staff};
+  } catch (error) {
+    console.error("Failed to load staff data:", error);
+    throw new Response("Failed to load staff data", { status: 500 });
+  }
 };
-
 export default function Staff() {
   const { staff } = useLoaderData();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [sheetName, setSheetName] = useState("students");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setSheetName("students");
+  }, []);
+
+
+  const staffArray = Array.isArray(staff) ? staff : [];
+
 
   const handleProfileClick = (profile) => {
     setSelectedProfile(profile);
@@ -31,7 +45,7 @@ export default function Staff() {
     navigate("/staff/add", { state: { sheetName: "Staff" } });
   };
 
-  const filteredStaff = staff.filter((member) => {
+  const filteredStaff = staffArray.filter((member) => {
     if (!member || !member.firstName || !member.lastName) {
       return false;
     }

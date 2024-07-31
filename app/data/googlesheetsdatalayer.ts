@@ -1,4 +1,3 @@
-
 import { DataLayer } from './datalayer';
 import { authorize, getData as gsGetData, addData as gsAddData, updateData as gsUpdateData, deleteData as gsDeleteData } from '../googlesheetsserver';
 

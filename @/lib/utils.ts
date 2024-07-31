@@ -76,21 +76,21 @@ export const calculateMonthlyRate = (
   return totalMonthlyRate;
 };
 
-// Function to require user authentication
-export const requireUser: LoaderFunction = async ({ request }) => {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (!session) {
-    return redirect("/login");
+export async function requireUser({ request }) {
+  if (!request || !request.headers) {
+    throw new Error("Invalid request object");
   }
 
+  const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
 
   if (!userId) {
-    return redirect("/login");
+    throw redirect("/login");
   }
 
-  return userId;
-};
+  return session;
+}
+
 
 export const calculateRatios = (staff, students, day) => {
   const schools = new Set(

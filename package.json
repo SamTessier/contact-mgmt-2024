@@ -50,7 +50,6 @@
     "node-polyfill-webpack-plugin": "^4.0.0",
     "node-pre-gyp": "^0.17.0",
     "react": "^18.2.0",
-    "react-charts": "^3.0.0-beta.57",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.2.0",
@@ -60,6 +59,9 @@
     "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/register": "^7.24.6",
     "@remix-run/dev": "^2.4.1",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",

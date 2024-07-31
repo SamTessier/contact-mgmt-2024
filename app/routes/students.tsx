@@ -8,13 +8,17 @@ import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
+import { useEffect } from "react";
 
-export const loader: LoaderFunction = async ({ request, params }) => {
-  const session = await requireUser({ request, params });
-
-  const students = await staffStudentDataLayer.getData();
-
-  return { students, session };
+export const loader: LoaderFunction = async (args) => {
+  try {
+    await requireUser(args);
+    const students = staffStudentDataLayer.getData("students");
+    return { students};
+  } catch (error) {
+    console.error("Failed to load students data:", error);
+    throw new Response("Failed to load students data", { status: 500 });
+  }
 };
 
 export default function Students() {
@@ -22,7 +26,15 @@ export default function Students() {
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [sheetName, setSheetName] = useState("students");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setSheetName("students");
+  }, []);
+
+  const studentsArray = Array.isArray(students) ? students : [];
+
 
   const handleProfileClick = (profile) => {
     setSelectedProfile(profile);
@@ -30,10 +42,10 @@ export default function Students() {
   };
 
   const handleAddProfile = () => {
-    navigate("/students/add", { state: { sheetName: "Students" } });
+    navigate("/students/add ", { state: { sheetName: "students" } });
   };
 
-  const filteredStudents = students.filter((student) => {
+  const filteredStudents = studentsArray.filter((student) => {
     if (!student || !student.studentName || !student.email) {
       return false;
     }

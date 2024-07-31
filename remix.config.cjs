@@ -9,6 +9,7 @@ module.exports = {
   assetsBuildDirectory: "public/build",
   publicPath: "/build/",
   serverBuildPath: "build/index.js",
+  serverDependenciesToBundle: ["d3-time-format"],
   browserNodeBuiltinsPolyfill: {
     modules: { path: true, os: true, crypto: true },
   },
