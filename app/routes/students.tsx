@@ -9,15 +9,13 @@ import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 
-
 export const loader: LoaderFunction = async ({ request, params }) => {
   const session = await requireUser({ request, params });
 
   const students = await staffStudentDataLayer.getData();
 
   return { students, session };
-}
-
+};
 
 export default function Students() {
   const { students } = useLoaderData();
@@ -32,7 +30,7 @@ export default function Students() {
   };
 
   const handleAddProfile = () => {
-    navigate('/students/add', { state: { sheetName: 'Students' } });
+    navigate("/students/add", { state: { sheetName: "Students" } });
   };
 
   const filteredStudents = students.filter((student) => {
@@ -57,7 +55,9 @@ export default function Students() {
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />
-      <Button variant="primary" onClick={handleAddProfile}>Add Profile</Button>
+      <Button variant="primary" onClick={handleAddProfile}>
+        Add Profile
+      </Button>
       <ProfileViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

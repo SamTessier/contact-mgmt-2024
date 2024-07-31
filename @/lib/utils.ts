@@ -3,6 +3,7 @@ import { authorize, getSessionData } from "app/googlesheetsserver";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { eachDayOfInterval, startOfMonth, endOfMonth, format } from "date-fns";
+import { getSession } from "~/session.server";
 
 // Function to combine class names
 export const cn = (...inputs: ClassValue[]): string => {
@@ -76,30 +77,34 @@ export const calculateMonthlyRate = (
 };
 
 // Function to require user authentication
-export const requireUser: LoaderFunction = async ({ request, params, context }) => {
-  const sessionCookie = request.headers.get("Cookie");
-  if (!sessionCookie) {
-    throw redirect("/login");
-  }
-  const auth = await authorize();
-  const sessionId = sessionCookie.split("=")[1];
-  const session = await getSessionData(auth, sessionId);
-
-  if (!session || !session.userId) {
-    throw redirect("/login");
+export const requireUser: LoaderFunction = async ({ request }) => {
+  const session = await getSession(request.headers.get("Cookie"));
+  if (!session) {
+    return redirect("/login");
   }
 
-  return session;
+  const userId = session.get("userId");
+
+  if (!userId) {
+    return redirect("/login");
+  }
+
+  return userId;
 };
 
 export const calculateRatios = (staff, students, day) => {
-  const schools = new Set(staff.map((s) => s.school).concat(students.map((s) => s.school)));
-  
+  const schools = new Set(
+    staff.map((s) => s.school).concat(students.map((s) => s.school))
+  );
+
   return Array.from(schools).map((school) => {
-    const staffCount = staff.filter((s) => s.school === school && s.availability.includes(day)).length;
-    const studentCount = students.filter((s) => s.school === school && s.weeklySchedule.includes(day)).length;
+    const staffCount = staff.filter(
+      (s) => s.school === school && s.availability.includes(day)
+    ).length;
+    const studentCount = students.filter(
+      (s) => s.school === school && s.weeklySchedule.includes(day)
+    ).length;
     const ratio = studentCount === 0 ? 0 : staffCount / studentCount;
     return { school, ratio };
   });
 };
-

@@ -7,12 +7,12 @@ import { Input } from "@/components/ui/input";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStaffColumns } from "./columns";
 import { Button } from "@/components/ui/button";
+import { staffStudentDataLayer } from "../data/initializedatalayer.server";
 
 export const loader: LoaderFunction = async (args) => {
-  const user = await requireUser(args); 
-  const { default: initializedDataLayer } = await import("../data/initializedatalayer.server");
-  const data = await initializedDataLayer.getData();
-  return { ...data, user };
+  await requireUser(args);
+  const staff = staffStudentDataLayer.getData("staff");
+  return { staff };
 };
 
 export default function Staff() {
@@ -28,7 +28,7 @@ export default function Staff() {
   };
 
   const handleAddProfile = () => {
-    navigate('/staff/add', { state: { sheetName: 'Staff' } });
+    navigate("/staff/add", { state: { sheetName: "Staff" } });
   };
 
   const filteredStaff = staff.filter((member) => {
@@ -53,7 +53,9 @@ export default function Staff() {
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />
-      <Button variant="primary" onClick={handleAddProfile}>Add Profile</Button>
+      <Button variant="primary" onClick={handleAddProfile}>
+        Add Profile
+      </Button>
       <ProfileViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

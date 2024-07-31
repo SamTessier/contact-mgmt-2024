@@ -1,31 +1,28 @@
 import React, { useState, Suspense } from "react";
 import { LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { calculateRatios } from "@/lib/utils";
-import { authorize, getData } from "../googlesheetsserver";
+import { calculateRatios, requireUser } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/date-picker";
-import connection from "~/config/db";
+import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 
+export const loader: LoaderFunction = async (args) => {
+  await requireUser(args);
 
-export const loader: LoaderFunction = async () => {
-  const auth = await authorize();
-  const sheetId = process.env.GOOGLE_SHEETS_ID;
-  if (!sheetId) {
-    throw new Error("GOOGLE_SHEETS_ID environment variable is not set.");
-  }
-  const { staff, students } = await getData(auth, sheetId, "Data");
-  const results = await connection.query("SELECT 1 + 1 AS solution");
-  return json({ staff, students, results });
+  const data = await staffStudentDataLayer.getData("staff");
+
+  return json(data);
 };
 
-const Chart = React.lazy(() => import('react-charts').then((mod) => ({ default: mod.Chart })));
+const Chart = React.lazy(() =>
+  import("react-charts").then((mod) => ({ default: mod.Chart }))
+);
 
 const StaffStudentRatioChart = ({ staff, students, day }) => {
   const data = React.useMemo(() => {
     const ratios = calculateRatios(staff, students, day);
     return [
       {
-        label: 'Staff/Student Ratio',
+        label: "Staff/Student Ratio",
         data: ratios.map(({ school, ratio }) => ({
           school,
           ratio,
@@ -45,21 +42,21 @@ const StaffStudentRatioChart = ({ staff, students, day }) => {
     () => [
       {
         getValue: (datum) => datum.ratio,
-        elementType: 'bar',
+        elementType: "bar",
       },
     ],
     []
   );
 
   const getColor = (ratio) => {
-    if (ratio >= 16) return 'darkred'; // Way too many students per staff
-    if (ratio >= 8) return 'green';
-    if (ratio >= 4) return 'orange';
-    return 'red';
+    if (ratio >= 16) return "darkred"; // Way too many students per staff
+    if (ratio >= 8) return "green";
+    if (ratio >= 4) return "orange";
+    return "red";
   };
 
   return (
-    <div style={{ width: '100%', height: '300px' }}>
+    <div style={{ width: "100%", height: "300px" }}>
       <Suspense fallback={<div>Loading chart...</div>}>
         <Chart
           options={{
@@ -67,7 +64,9 @@ const StaffStudentRatioChart = ({ staff, students, day }) => {
             primaryAxis,
             secondaryAxes,
             getSeriesStyle: (series) => ({
-              fill: series.datums.map((datum) => getColor(datum.originalDatum.ratio)),
+              fill: series.datums.map((datum) =>
+                getColor(datum.originalDatum.ratio)
+              ),
             }),
           }}
         />
@@ -77,8 +76,8 @@ const StaffStudentRatioChart = ({ staff, students, day }) => {
 };
 
 const HomePage = () => {
-  const { staff, students, results } = useLoaderData();
-  const [day, setDay] = useState('M'); // Default to Monday
+  const { staff, students } = useLoaderData();
+  const [day, setDay] = useState("M"); // Default to Monday
 
   const handleDateSelect = (selectedDay: string) => {
     setDay(selectedDay);
@@ -86,7 +85,6 @@ const HomePage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {JSON.stringify(results)}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <DatePicker onDateSelect={handleDateSelect} />
