@@ -9,15 +9,41 @@ module.exports = {
   assetsBuildDirectory: "public/build",
   publicPath: "/build/",
   serverBuildPath: "build/index.js",
-  serverDependenciesToBundle: ["d3-time-format"],
+  serverDependenciesToBundle: [
+    "@nivo/annotations",
+    "@nivo/axes",
+    "@nivo/bar",
+    "@nivo/colors",
+    "@nivo/core",
+    "@nivo/legends",
+    "@nivo/scales",
+    "@nivo/tooltip",
+    "@react-spring/animated",
+    "@react-spring/core",
+    "@react-spring/rafz",
+    "@react-spring/shared",
+    "@react-spring/types",
+    "@react-spring/web",
+    "d3-array",
+    "d3-color",
+    "d3-format",
+    "d3-interpolate",
+    "d3-path",
+    "d3-scale",
+    "d3-scale-chromatic",
+    "d3-shape",
+    "d3-time",
+    "d3-time-format",
+    "internmap",
+    "esm/merge",
+    "lodash",
+    "lodash-es",
+  ],
   browserNodeBuiltinsPolyfill: {
     modules: { path: true, os: true, crypto: true },
   },
   webpack: (config) => {
-    config.plugins = [
-      ...config.plugins,
-      new NodePolyfillPlugin(),
-    ];
+    config.plugins = [...config.plugins, new NodePolyfillPlugin()];
     return config;
   },
 };

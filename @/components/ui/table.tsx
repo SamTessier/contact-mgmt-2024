@@ -8,7 +8,7 @@ const Table = React.forwardRef<
   <table
     ref={ref}
     className={cn(
-      "min-w-full divide-y divide-coolGray-200 overflow-hidden",
+      "min-w-full w-full divide-y divide-coolGray-200 overflow-hidden",
       className
     )}
     {...props}
@@ -23,7 +23,7 @@ const TableHeader = React.forwardRef<
   <thead
     ref={ref}
     className={cn(
-      "max-w-full divide-y divide-coolGray-200 overflow-hidden justify-center",
+      "w-full divide-y divide-coolGray-200 overflow-hidden justify-center",
       className
     )}
     {...props}
@@ -37,7 +37,7 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
+    className={cn("[&_tr:last-child]:border-0 w-full", className)}
     {...props}
   />
 ));
@@ -50,7 +50,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+      "w-full border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
       className
     )}
     {...props}
@@ -65,7 +65,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "hover:bg-coolGray-50 transition duration-150 ease-in-out",
+      "hover:bg-coolGray-50 transition duration-150 ease-in-out w-full",
       className
     )}
     {...props}
@@ -77,10 +77,14 @@ const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
-  <th className={cn(
-    "divide-y divide-coolGray-200 overflow-hidden fixed-width truncate",
-    className
-  )} ref={ref} {...props} />
+  <th
+    className={cn(
+      "divide-y divide-coolGray-200 overflow-hidden truncate",
+      className
+    )}
+    ref={ref}
+    {...props}
+  />
 ));
 TableHead.displayName = "TableHead";
 
@@ -90,7 +94,10 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("table-text table-cell responsive-table-cell fixed-width truncate", className)}
+    className={cn(
+      "table-text table-cell responsive-table-cell truncate",
+      className
+    )}
     {...props}
   />
 ));

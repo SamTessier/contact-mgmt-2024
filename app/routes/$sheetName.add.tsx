@@ -1,7 +1,7 @@
 import { ActionFunction } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { useParams } from "@remix-run/react";
-import redirect from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 import { LoaderFunction } from "@remix-run/node";
 
@@ -9,6 +9,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   const { sheetName } = params;
   return { sheetName };
 };
+
 export const action: ActionFunction = async ({ request }) => {
   const url = new URL(request.url);
   const sheetName = url.pathname.split("/")[1];

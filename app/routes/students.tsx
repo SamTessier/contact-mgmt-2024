@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderFunction } from "@remix-run/node";
 import { requireUser } from "@/lib/utils";
@@ -8,13 +8,13 @@ import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
-import { useEffect } from "react";
 
 export const loader: LoaderFunction = async (args) => {
   try {
     await requireUser(args);
-    const students = staffStudentDataLayer.getData("students");
-    return { students};
+    const students = await staffStudentDataLayer.getData("students");
+    console.log("Students:", students);
+    return { students };
   } catch (error) {
     console.error("Failed to load students data:", error);
     throw new Response("Failed to load students data", { status: 500 });
@@ -22,7 +22,7 @@ export const loader: LoaderFunction = async (args) => {
 };
 
 export default function Students() {
-  const { students } = useLoaderData();
+  const { students } = useLoaderData<{ students: any[] }>();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -35,14 +35,13 @@ export default function Students() {
 
   const studentsArray = Array.isArray(students) ? students : [];
 
-
   const handleProfileClick = (profile) => {
     setSelectedProfile(profile);
     setIsModalOpen(true);
   };
 
   const handleAddProfile = () => {
-    navigate("/students/add ", { state: { sheetName: "students" } });
+    navigate("/students/add", { state: { sheetName: "students" } });
   };
 
   const filteredStudents = studentsArray.filter((student) => {

@@ -91,7 +91,6 @@ export async function requireUser({ request }) {
   return session;
 }
 
-
 export const calculateRatios = (staff, students, day) => {
   const schools = new Set(
     staff.map((s) => s.school).concat(students.map((s) => s.school))
@@ -108,3 +107,4 @@ export const calculateRatios = (staff, students, day) => {
     return { school, ratio };
   });
 };
+

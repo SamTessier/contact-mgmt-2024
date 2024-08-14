@@ -31,3 +31,24 @@ export interface ServerEntryModule {
     [key: string]: any; // Allow additional properties
   }
   
+
+export interface Student {
+  id: number;
+  studentName: string;
+  school: string;
+  weeklySchedule: string;
+  phoneOne: string;
+  phoneTwo: string;
+  email: string;
+}
+
+export interface StaffMember {
+  id: number;
+  firstName: string;
+  lastName: string;
+  school: string;
+  weeklySchedule: string;
+  phoneOne: string;
+  phoneTwo: string;
+  email: string;
+}

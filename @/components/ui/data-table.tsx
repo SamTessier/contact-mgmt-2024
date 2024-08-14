@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
   const virtualizer = useVirtualizer({
     count: table.getRowModel().rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 35,
+    estimateSize: () => 65,
     overscan: 10,
   });
 
@@ -58,12 +58,19 @@ export function DataTable<TData, TValue>({
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow
+                    key={headerGroup.id}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: `repeat(${headerGroup.headers.length}, 1fr)`,
+                      gap: "0",
+                    }}
+                  >
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        className="whitespace-nowrap px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider fixed-width truncate"
+                        className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-clip"
                       >
                         {header.column.columnDef.header}
                         <span>
@@ -86,8 +93,8 @@ export function DataTable<TData, TValue>({
             style={{ height: "600px", overflow: "auto" }}
           >
             <Table>
-              <TableBody>
-                <div
+              <div ref={parentRef} className="table-body">
+                <TableBody
                   style={{
                     height: `${virtualizer.getTotalSize()}px`,
                     position: "relative",
@@ -122,8 +129,8 @@ export function DataTable<TData, TValue>({
                       </TableRow>
                     );
                   })}
-                </div>
-              </TableBody>
+                </TableBody>
+              </div>
             </Table>
           </div>
         </div>

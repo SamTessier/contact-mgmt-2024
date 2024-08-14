@@ -29,7 +29,7 @@ export default function Staff() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setSheetName("students");
+    setSheetName("staff");
   }, []);
 
 

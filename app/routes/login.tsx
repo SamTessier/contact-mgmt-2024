@@ -1,5 +1,5 @@
 import { ActionFunction, json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, Link } from "@remix-run/react";
 import { authenticateUser } from "../auth";
 import { getSession, commitSession } from "app/session.server";
 
@@ -79,6 +79,11 @@ export default function Login() {
             Login
           </button>
         </Form>
+        <div className="mt-4 text-center">
+          <Link to="/signup" className="text-sm text-blue-600 underline">
+            or create an account
+          </Link>
+        </div>
       </div>
     </div>
   );
