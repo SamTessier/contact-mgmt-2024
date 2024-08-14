@@ -43,4 +43,4 @@ This app is a tool for managing all the client and contractor data stored in Goo
 
 ## 📬 Contact
 
-If you have any questions or feedback, feel free to reach out at [your-email@example.com](mailto:samcjtessier@gmail.com).
+If you have any questions or feedback, feel free to reach out at [samcjtessier@gmail.com](mailto:samcjtessier@gmail.com).
