@@ -3,10 +3,11 @@
     "remix.env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "remix.config.cjs",
+    "remix.config.js",
     "../tailwind.config.ts",
-    "app/entry.server.tsx"
-, "app/server.ts"  ],
+    "app/entry.server.tsx",
+    "app/server.ts"
+  ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,
@@ -23,7 +24,6 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./app/*"]
-    },
-    "noEmit": true
+    }
   }
 }

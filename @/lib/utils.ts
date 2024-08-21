@@ -1,12 +1,13 @@
-import { LoaderFunction, redirect } from "@remix-run/node";
-import { authorize, getSessionData } from "app/googlesheetsserver";
+import { redirect } from "@remix-run/node";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { eachDayOfInterval, startOfMonth, endOfMonth, format } from "date-fns";
 import { getSession } from "~/session.server";
+import PDFDocument from "pdfkit"; // You'll need to install this
+import nodemailer from "nodemailer"; 
 
-// Function to combine class names
-export const cn = (...inputs: ClassValue[]): string => {
+// Function to combine class names 
+export const cn = (...inputs: ClassValue[]): string => { 
   return twMerge(clsx(...inputs));
 };
 
@@ -108,3 +109,54 @@ export const calculateRatios = (staff, students, day) => {
   });
 };
 
+// export async function generateInvoicePDF(data: any): Promise<Buffer> {
+//   const doc = new PDFDocument();
+//   const buffers: Buffer[] = [];
+
+//   doc.on("data", buffers.push.bind(buffers));
+//   doc.on("end", () => {});
+
+//   // Add content to the PDF (this is a simple example)
+//   doc.fontSize(25).text("Invoice", { align: "center" });
+//   doc.text(`Contractor: ${data.contractorName}`);
+//   doc.text(`School: ${data.schoolName}`);
+//   doc.text(`Date: ${data.invoiceDate}`);
+  
+//   data.days.forEach((day: any, index: number) => {
+//     doc.text(`Day ${index + 1}: ${day.hoursWorked} hours @ $${day.rateOfPay}/hr`);
+//   });
+
+//   if (data.suppliesAmount) {
+//     doc.text(`Supplies Amount: $${data.suppliesAmount}`);
+//   }
+
+//   doc.end();
+
+//   return Buffer.concat(buffers);
+// }
+
+// export async function sendInvoiceEmail(data: any, pdfBuffer: Buffer) {
+//   const transporter = nodemailer.createTransport({
+//     service: "Gmail", // Or your preferred email service
+//     auth: {
+//       user: process.env.EMAIL_USERNAME,
+//       pass: process.env.EMAIL_PASSWORD,
+//     },
+//   });
+
+//   const mailOptions = {
+//     from: process.env.EMAIL_USERNAME,
+//     to: "autoentry@yourcompany.com", // Sage AutoEntry email address
+//     subject: `Invoice from ${data.contractorName}`,
+//     text: "Please find the attached invoice.",
+//     attachments: [
+//       {
+//         filename: "invoice.pdf",
+//         content: pdfBuffer,
+//         contentType: "application/pdf",
+//       },
+//     ],
+//   };
+
+//   await transporter.sendMail(mailOptions);
+// }

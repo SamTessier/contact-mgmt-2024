@@ -1,8 +1,5 @@
-"use client";
-
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import * as React from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -14,23 +11,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const daySchema = z.object({
-  hoursWorked: z.number().min(0, "Hours worked must be a positive number."),
-  rateOfPay: z.number().min(0, "Rate of pay must be a positive number."),
-});
-
-const invoiceSchema = z.object({
-  contractorName: z.string().min(2, "Name must be at least 2 characters."),
-  schoolName: z.string().min(2, "School name is required."),
-  invoiceDate: z.string().min(10, "Date is required."),
-  days: z.array(daySchema).length(14),
-});
-
-type InvoiceFormValues = z.infer<typeof invoiceSchema>;
+type InvoiceFormValues = {
+  contractorName: string;
+  schoolName: string;
+  invoiceDate: string;
+  days: Array<{ hoursWorked: number; rateOfPay: number }>;
+};
 
 export function InvoiceSubmissionForm() {
   const form = useForm<InvoiceFormValues>({
-    resolver: zodResolver(invoiceSchema),
     defaultValues: {
       contractorName: "",
       schoolName: "",
@@ -61,7 +50,9 @@ export function InvoiceSubmissionForm() {
               <FormControl>
                 <Input placeholder="John Doe" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage>
+                {form.formState.errors.contractorName?.message}
+              </FormMessage>
             </FormItem>
           )}
         />
@@ -74,7 +65,7 @@ export function InvoiceSubmissionForm() {
               <FormControl>
                 <Input placeholder="Example School" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage>{form.formState.errors.schoolName?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -87,7 +78,7 @@ export function InvoiceSubmissionForm() {
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
-              <FormMessage />
+              <FormMessage>{form.formState.errors.invoiceDate?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -101,9 +92,11 @@ export function InvoiceSubmissionForm() {
                 <FormItem>
                   <FormLabel>Hours Worked</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0" {...field} />
+                    <Input placeholder="0" type="number" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage>
+                    {form.formState.errors.days?.[index]?.hoursWorked?.message}
+                  </FormMessage>
                 </FormItem>
               )}
             />
@@ -114,9 +107,11 @@ export function InvoiceSubmissionForm() {
                 <FormItem>
                   <FormLabel>Rate of Pay</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0" {...field} />
+                    <Input placeholder="0" type="number" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage>
+                    {form.formState.errors.days?.[index]?.rateOfPay?.message}
+                  </FormMessage>
                 </FormItem>
               )}
             />

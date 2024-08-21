@@ -10,14 +10,6 @@ module.exports = {
   publicPath: "/build/",
   serverBuildPath: "build/index.js",
   serverDependenciesToBundle: [
-    "@nivo/annotations",
-    "@nivo/axes",
-    "@nivo/bar",
-    "@nivo/colors",
-    "@nivo/core",
-    "@nivo/legends",
-    "@nivo/scales",
-    "@nivo/tooltip",
     "@react-spring/animated",
     "@react-spring/core",
     "@react-spring/rafz",
@@ -36,8 +28,6 @@ module.exports = {
     "d3-time-format",
     "internmap",
     "esm/merge",
-    "lodash",
-    "lodash-es",
   ],
   browserNodeBuiltinsPolyfill: {
     modules: { path: true, os: true, crypto: true },
