@@ -9,16 +9,13 @@ import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 
-export const loader: LoaderFunction = async (args) => {
-  try {
-    await requireUser(args);
-    const students = await staffStudentDataLayer.getData("students");
-    console.log("Students:", students);
-    return { students };
-  } catch (error) {
-    console.error("Failed to load students data:", error);
-    throw new Response("Failed to load students data", { status: 500 });
-  }
+
+export const loader: LoaderFunction = async ({ request, params }) => {
+  const session = await requireUser({ request, params });
+
+  const students = await staffStudentDataLayer.getData("Students");
+
+  return { students, session };
 };
 
 export default function Students() {
@@ -26,12 +23,7 @@ export default function Students() {
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const [sheetName, setSheetName] = useState("students");
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setSheetName("students");
-  }, []);
+    const navigate = useNavigate();
 
   const studentsArray = Array.isArray(students) ? students : [];
 
@@ -41,7 +33,7 @@ export default function Students() {
   };
 
   const handleAddProfile = () => {
-    navigate("/students/add", { state: { sheetName: "students" } });
+    navigate("/students/add", { state: { sheetName: "Students" } });
   };
 
   const filteredStudents = studentsArray.filter((student) => {

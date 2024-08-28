@@ -8,7 +8,7 @@ const dataSource = process.env.DATA_SOURCE;
 
 const userSessionDataLayer = new SQLDataLayer();
 
-let staffStudentDataLayer: DataLayer;
+let staffStudentDataLayer: SQLDataLayer | GoogleSheetsDataLayer;
 
 if (dataSource === 'mysql') {
   staffStudentDataLayer = new SQLDataLayer();
