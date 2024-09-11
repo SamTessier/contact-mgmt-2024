@@ -1,9 +1,7 @@
-// // HomePage.tsx
 // import React, { useState } from 'react';
 // import { useLoaderData } from "@remix-run/react";
 // import { LoaderFunction } from "@remix-run/node";
 // import { StaffStudentRatioChart } from "@/components/ui/ratio-chart";
-// import { DatePicker } from "@/components/ui/date-picker";
 // import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 // import { requireUser } from "@/lib/utils";
 
@@ -25,19 +23,25 @@
 // };
 
 // const HomePage = () => {
-//   const { staff, students, results } = useLoaderData();
+//   const { staff, students } = useLoaderData();
 //   const [day, setDay] = useState('M'); // Default to Monday
 
-//   const handleDateSelect = (selectedDay: string) => {
-//     setDay(selectedDay);
+//   // Handle changing the selected day
+//   const handleDayChange = (event) => {
+//     setDay(event.target.value);
 //   };
 
 //   return (
 //     <div className="container mx-auto p-4">
-//       {JSON.stringify(results)}
 //       <div className="flex justify-between items-center mb-4">
 //         <h1 className="text-3xl font-bold">Dashboard</h1>
-//         <DatePicker onDateSelect={handleDateSelect} />
+//         <select value={day} onChange={handleDayChange} className="p-2 border rounded">
+//           <option value="M">Monday</option>
+//           <option value="T">Tuesday</option>
+//           <option value="W">Wednesday</option>
+//           <option value="TH">Thursday</option>
+//           <option value="F">Friday</option>
+//         </select>
 //       </div>
 //       <StaffStudentRatioChart staff={staff} students={students} day={day} />
 //     </div>

@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import connection from "./config/db";
+import { redirect } from "@remix-run/node";
 
 export async function addUser({
   email,

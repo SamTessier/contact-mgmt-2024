@@ -92,19 +92,24 @@ export async function requireUser({ request }) {
   return session;
 }
 
-export const calculateRatios = (staff, students, day) => {
+export const calculateRatios = async (
+  staff: Staff[],
+  students: Student[],
+  day: string
+): Promise<{ school: string; ratio: number }[]> => {
   const schools = new Set(
     staff.map((s) => s.school).concat(students.map((s) => s.school))
   );
 
   return Array.from(schools).map((school) => {
     const staffCount = staff.filter(
-      (s) => s.school === school && s.availability.includes(day)
+      (s) => s.school === school && s.availability.split(', ').includes(day)
     ).length;
     const studentCount = students.filter(
-      (s) => s.school === school && s.weeklySchedule.includes(day)
+      (s) => s.school === school && Array.isArray(s.weeklySchedule) && s.weeklySchedule.includes(day)
     ).length;
     const ratio = studentCount === 0 ? 0 : staffCount / studentCount;
+    console.log(`School: ${school}, Staff Count: ${staffCount}, Student Count: ${studentCount}, Ratio: ${ratio}`);
     return { school, ratio };
   });
 };

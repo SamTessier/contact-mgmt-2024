@@ -1,31 +1,35 @@
 import { useState, useEffect } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction, redirect } from "@remix-run/node";
 import { requireUser } from "@/lib/utils";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
-import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
+import { staffStudentDataLayer } from "../data/initializedatalayer.server";
 
 
-export const loader: LoaderFunction = async ({ request, params }) => {
-  const session = await requireUser({ request, params });
+export const loader: LoaderFunction = async (args) => {
+  console.log("Loading students data...");
+  try {
+    await requireUser(args);
+    const students = await staffStudentDataLayer.getData("Students");
+    console.log("Loaded students data:", students);
+    return { students };
 
-  const students = await staffStudentDataLayer.getData("Students");
-
-  return { students, session };
-};
+  } catch (error) {
+    console.error("Failed to load students data:", error);
+return redirect("/login");
+  }
+}
 
 export default function Students() {
   const { students } = useLoaderData<{ students: any[] }>();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
-    const navigate = useNavigate();
-
-  const studentsArray = Array.isArray(students) ? students : [];
+  const navigate = useNavigate();
 
   const handleProfileClick = (profile) => {
     setSelectedProfile(profile);
@@ -36,7 +40,7 @@ export default function Students() {
     navigate("/students/add", { state: { sheetName: "Students" } });
   };
 
-  const filteredStudents = studentsArray.filter((student) => {
+  const filteredStudents = students.filter((student) => {
     if (!student || !student.studentName || !student.email) {
       return false;
     }
@@ -68,7 +72,7 @@ export default function Students() {
         onUpdate={() => window.location.reload()}
         sheetName="Students"
       />
-      <DataTable columns={studentColumnsWithClick} data={filteredStudents} />
+      <DataTable columns={studentColumnsWithClick} data={filteredStudents}/>
     </div>
   );
 }

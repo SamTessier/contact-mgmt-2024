@@ -41,38 +41,35 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
   });
 
+  // Virtualizer setup
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
     count: table.getRowModel().rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 65,
+    estimateSize: () => 65, // estimated row height
     overscan: 10,
   });
 
+  const virtualItems = virtualizer.getVirtualItems();
+  const totalSize = virtualizer.getTotalSize();
+
   return (
     <TooltipProvider>
-      <div className="data-table-container">
-        <div className="table-wrapper">
+      <div className="data-table-container w-full flex justify-center">
+        <div className="table-wrapper w-full">
           <div className="table-header">
-            <Table>
+            <Table className="w-full">
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: `repeat(${headerGroup.headers.length}, 1fr)`,
-                      gap: "0",
-                    }}
-                  >
+                  <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
                         onClick={header.column.getToggleSortingHandler()}
-                        className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider overflow-clip"
+                        className="whitespace-nowrap px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-full truncate"
                       >
-                        {header.column.columnDef.header}
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                         <span>
                           {header.column.getIsSorted()
                             ? header.column.getIsSorted() === "desc"
@@ -87,50 +84,36 @@ export function DataTable<TData, TValue>({
               </TableHeader>
             </Table>
           </div>
+          {/* Scrollable container for the virtualized table */}
           <div
             ref={parentRef}
             className="table-body"
-            style={{ height: "600px", overflow: "auto" }}
+            style={{ height: "600px", width: "100%" }}
           >
-            <Table>
-              <div ref={parentRef} className="table-body">
-                <TableBody
-                  style={{
-                    height: `${virtualizer.getTotalSize()}px`,
-                    position: "relative",
-                  }}
-                >
-                  {virtualizer.getVirtualItems().map((virtualRow) => {
-                    const row = table.getRowModel().rows[virtualRow.index];
-                    return (
-                      <TableRow
-                        key={row.id}
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          transform: `translateY(${virtualRow.start}px)`,
-                          height: `${virtualRow.size}px`,
-                        }}
-                        className="bg-white divide-y divide-gray-200 table-row"
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell
-                            key={cell.id}
-                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 overflow-clip fixed-width truncate"
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </div>
+            <Table className="w-full">
+              <TableBody>
+                {virtualItems.map((virtualRow) => {
+                  const row = table.getRowModel().rows[virtualRow.index];
+                  return (
+                    <TableRow
+                      key={row.id}
+                      className="bg-white divide-y divide-gray-200 max-w-full overflow-auto"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 overflow-hidden text-ellipsis "
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
             </Table>
           </div>
         </div>

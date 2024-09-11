@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderFunction } from "@remix-run/node";
 import { requireUser } from "@/lib/utils";
@@ -8,33 +8,27 @@ import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStaffColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "../data/initializedatalayer.server";
-import { useEffect } from "react";
+import { redirect } from "@remix-run/node";
 
 export const loader: LoaderFunction = async (args) => {
+  console.log("Loading staff data...");
   try {
     await requireUser(args);
-    const staff = staffStudentDataLayer.getData("staff");
-    return { staff};
+    const staff = await staffStudentDataLayer.getData("Staff");
+    console.log("Loaded staff data:", staff);
+    return { staff };
   } catch (error) {
     console.error("Failed to load staff data:", error);
-    throw new Response("Failed to load staff data", { status: 500 });
+    return redirect("/login");
   }
 };
-export default function Staff() {
-  const { staff } = useLoaderData();
+
+export default function Students() {
+  const { staff } = useLoaderData<{ staff: any[] }>();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
-  const [sheetName, setSheetName] = useState("students");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setSheetName("staff");
-  }, []);
-
-
-  const staffArray = Array.isArray(staff) ? staff : [];
-
 
   const handleProfileClick = (profile) => {
     setSelectedProfile(profile);
@@ -45,7 +39,7 @@ export default function Staff() {
     navigate("/staff/add", { state: { sheetName: "Staff" } });
   };
 
-  const filteredStaff = staffArray.filter((member) => {
+  const filteredStaff = staff.filter((member) => {
     if (!member || !member.firstName || !member.lastName) {
       return false;
     }

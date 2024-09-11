@@ -1,4 +1,4 @@
-import { MetaFunction, LoaderFunction, json } from "@remix-run/node";
+import { MetaFunction, LoaderFunction, json, redirect } from "@remix-run/node";
 import { NavLink, Outlet, useLoaderData, useLocation, Link } from "@remix-run/react";
 import { useSelectedMonth } from "context/selectedMonthContext";
 import {
@@ -8,7 +8,8 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { authenticateUser } from "../auth";
+import { requireUser } from "@/lib/utils";
+import logo from "@/assets/asp-pal-logo.jpeg";
 
 
 export const meta: MetaFunction = () => {
@@ -18,9 +19,18 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const userIsAuthenticated = await authenticateUser(request);
-  return json({ userIsAuthenticated });
+export const loader: LoaderFunction = async (args) => {
+  try {
+    const user = await requireUser(args); 
+    if (user) {
+      return redirect("/students");
+    } else {
+      return redirect("/login");
+    }
+  } catch (error) {
+    console.error("User not authenticated:", error);
+    return redirect("/login");
+  }
 };
 
 export default function Index() {
@@ -36,16 +46,15 @@ export default function Index() {
   const location = useLocation();
   const { userIsAuthenticated } = useLoaderData();
   
-  // Hide navigation if on login or signup page
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <div>
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
         <div className="flex justify-between items-center p-8">
-          <h1 className="text-4xl font-bold uppercase">School App</h1>
+        <img src={logo} alt="Logo" style={{ width: '200px', height: 'auto' }} />
           {userIsAuthenticated && (
-            <Link to="/logout" className="text-blue-600 underline">
+            <Link to="/logout" className="text-blue-600 underluine">
               Logout
             </Link>
           )}

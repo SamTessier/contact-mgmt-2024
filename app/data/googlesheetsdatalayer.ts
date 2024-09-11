@@ -1,5 +1,11 @@
-import { DataLayer } from './datalayer';
-import { authorize, getData as gsGetData, addData as gsAddData, updateData as gsUpdateData, deleteData as gsDeleteData } from '../googlesheetsserver';
+import { DataLayer } from "./datalayer";
+import {
+  authorize,
+  getData as gsGetData,
+  addData as gsAddData,
+  updateData as gsUpdateData,
+  deleteData as gsDeleteData,
+} from "../googlesheetsserver";
 
 class GoogleSheetsDataLayer implements DataLayer {
   private authClient: any;
@@ -15,9 +21,9 @@ class GoogleSheetsDataLayer implements DataLayer {
     return this.authClient;
   }
 
-  async getData(sheetName: string) {
+  async getData() {
     const auth = await this.authenticate();
-    return gsGetData(auth, this.spreadsheetId, sheetName);
+    return gsGetData(auth, this.spreadsheetId);
   }
 
   async addData(data: any, sheetName: string) {

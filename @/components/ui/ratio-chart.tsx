@@ -1,9 +1,9 @@
-// import React from 'react';
-// import { ResponsiveBar } from '@nivo/bar';
+// import React, { useMemo } from 'react';
+// import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 // import { calculateRatios } from "@/lib/utils";
 
 // const StaffStudentRatioChart = ({ staff, students, day }) => {
-//   const data = React.useMemo(() => {
+//   const data = useMemo(() => {
 //     const ratios = calculateRatios(staff, students, day);
 //     return ratios.map(({ school, ratio }) => ({
 //       school,
@@ -12,47 +12,37 @@
 //   }, [staff, students, day]);
 
 //   const getColor = (ratio) => {
-//     if (ratio >= 16) return 'darkred'; // Way too many students per staff
-//     if (ratio >= 8) return 'green';
-//     if (ratio >= 4) return 'orange';
-//     return 'red';
+//     return ratio === 8 ? 'green' : 'red';
+//   };
+
+//   const renderCustomBarLabel = ({ x, y, width, value }) => {
+//     return (
+//       <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>
+//         {value.toFixed(2)}
+//       </text>
+//     );
 //   };
 
 //   return (
 //     <div style={{ width: '100%', height: '300px' }}>
-//       <ResponsiveBar
-//         data={data}
-//         keys={['ratio']}
-//         indexBy="school"
-//         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-//         padding={0.3}
-//         colors={({ data }) => getColor(data.ratio)}
-//         axisBottom={{
-//           tickSize: 5,
-//           tickPadding: 5,
-//           tickRotation: 0,
-//           legend: 'School',
-//           legendPosition: 'middle',
-//           legendOffset: 32,
-//         }}
-//         axisLeft={{
-//           tickSize: 5,
-//           tickPadding: 5,
-//           tickRotation: 0,
-//           legend: 'Staff/Student Ratio',
-//           legendPosition: 'middle',
-//           legendOffset: -40,
-//         }}
-//         labelSkipWidth={12}
-//         labelSkipHeight={12}
-//         labelTextColor={{
-//           from: 'color',
-//           modifiers: [['darker', 1.6]],
-//         }}
-//         animate={true}
-//         motionStiffness={90}
-//         motionDamping={15}
-//       />
+//       <ResponsiveContainer width="100%" height="100%">
+//         <BarChart
+//           data={data}
+//           margin={{ top: 50, right: 30, left: 20, bottom: 5 }}
+//         >
+//           <CartesianGrid strokeDasharray="3 3" />
+//           <XAxis dataKey="school" />
+//           <YAxis domain={[0, 16]} label={{ value: 'Student/Staff Ratio', angle: -90, position: 'insideLeft' }} />
+//           <Tooltip />
+//           <Bar
+//             dataKey="ratio"
+//             fill="#8884d8"
+//             label={renderCustomBarLabel}
+//             barSize={30}
+//             fill={({ payload }) => getColor(payload.ratio)}
+//           />
+//         </BarChart>
+//       </ResponsiveContainer>
 //     </div>
 //   );
 // };

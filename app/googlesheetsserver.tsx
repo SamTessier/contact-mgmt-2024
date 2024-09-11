@@ -4,7 +4,7 @@ import path from 'path';
 const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS ? path.resolve(process.env.GOOGLE_APPLICATION_CREDENTIALS) : '';
 process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
 
-export async function authorize() {
+export async function authorize(credentialsPath: string) {
   const auth = new google.auth.GoogleAuth({
     keyFilename: credentialsPath,
     scopes: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'],
@@ -32,7 +32,7 @@ export async function getData(auth: any, spreadsheetId: string, sheetName: strin
   const studentsRows = studentsRes.data.values || [];
   const students = studentsRows.map(row => Object.fromEntries(row.map((cell, index) => [studentHeaders[index], cell])));
 
-  return { staff, students };
+  return [...staff, ...students];
 }
 
 export async function addData(auth: any, spreadsheetId: string, data: any, sheetName: string) {

@@ -8,7 +8,7 @@ const Table = React.forwardRef<
   <table
     ref={ref}
     className={cn(
-      "min-w-full w-full divide-y divide-coolGray-200 overflow-hidden",
+      "min-w-full w-full divide-y",
       className
     )}
     {...props}
@@ -62,12 +62,9 @@ const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
 >(({ className, ...props }, ref) => (
-  <tr
+  <div
     ref={ref}
-    className={cn(
-      "hover:bg-coolGray-50 transition duration-150 ease-in-out w-full",
-      className
-    )}
+    className={cn("flex w-full", className)} // Use flex for rows
     {...props}
   />
 ));
@@ -95,7 +92,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      "table-text table-cell responsive-table-cell truncate",
+      "flex-1 px-4 py-2", // Use flex-1 to make the cell flexible
       className
     )}
     {...props}
