@@ -10,23 +10,18 @@ class GoogleSheetsDataLayer implements DataLayer {
 
   async authenticate() {
     try {
-      console.log('🔐 Starting authentication process...');
+      console.log('🔍 Starting authentication process...');
       
       const credentialsJson = process.env.GOOGLE_CREDENTIALS_JSON;
       if (!credentialsJson) {
+        console.error('❌ No credentials found in environment');
         throw new Error('GOOGLE_CREDENTIALS_JSON not found in environment');
       }
 
-      // Parse the base64-encoded credentials
-      const credentials = JSON.parse(
-        Buffer.from(credentialsJson, 'base64').toString()
-      );
-      
-      console.log('✅ Credentials decoded successfully');
-
+      // Create credentials object directly
       const auth = new google.auth.GoogleAuth({
-        credentials,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        credentials: JSON.parse(credentialsJson),
+        scopes: ['https://www.googleapis.com/auth/spreadsheets']
       });
 
       console.log('✅ Auth object created');
