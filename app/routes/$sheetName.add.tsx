@@ -41,17 +41,17 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ProfileAddPage() {
+  const params = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const sheetName = location.state?.sheetName?.toLowerCase() || "students";
-
+  const sheetName = sheetNameFromParams(params);
+  
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">Add New {sheetName === "students" ? "Student" : "Staff Member"}</h2>
+        <h2 className="text-2xl font-bold mb-6">Add New {sheetName === "Students" ? "Student" : "Staff Member"}</h2>
         
         <Form method="post" className="space-y-6">
-          {sheetName === "students" ? (
+          {sheetName === "Students" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <FormField
@@ -168,7 +168,7 @@ export default function ProfileAddPage() {
               Cancel
             </Button>
             <Button type="submit">
-              Add {sheetName === "students" ? "Student" : "Staff Member"}
+              Add {sheetName === "Students" ? "Student" : "Staff Member"}
             </Button>
           </div>
         </Form>

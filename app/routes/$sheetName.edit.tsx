@@ -33,14 +33,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const sheetName = sheetNameFromParams(params);
-  invariant(sheetName === "Students" || sheetName === "Staff", "Invalid sheet name");
-
   const formData = await request.formData();
-  const data = Object.fromEntries(formData.entries());
+  const data = Object.fromEntries(formData);
   const email = formData.get("email");
-
+  
+  if (!email) throw new Error("Email is required");
+  
   await staffStudentDataLayer.updateData(data, email.toString(), sheetName);
-  return redirect(`/${sheetName}`);
+  return redirect(`/${sheetName.toLowerCase()}`);
 };
 
 export default function ProfileEditPage() {
