@@ -21,9 +21,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const email = url.searchParams.get("email");
   invariant(email, "Missing email");
 
-  const allData = await staffStudentDataLayer.getData(sheetName);
-  const data = allData.find(item => item.email === email);
-  invariant(data, "Data not found");
+  const result = await staffStudentDataLayer.getData(sheetName);
+  const dataArray = sheetName === "Staff" ? result.staff : result.students;
+  invariant(dataArray, "No data found");
+  
+  const data = dataArray.find(item => item.email === email);
+  invariant(data, "Profile not found");
 
   return { data, sheetName };
 };

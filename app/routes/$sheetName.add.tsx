@@ -6,9 +6,19 @@ import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 import { LoaderFunction } from "@remix-run/node";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
+import invariant from "tiny-invariant";
+
+const sheetNameFromParams = (params) => {
+  let sheetName = params.sheetName;
+  invariant(sheetName, "Missing sheet name");
+  sheetName = sheetName.toLowerCase();
+  sheetName = sheetName.charAt(0).toUpperCase() + sheetName.slice(1);
+  invariant(sheetName === "Students" || sheetName === "Staff", "Invalid sheet name");
+  return sheetName;
+};
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const { sheetName } = params;
+  const sheetName = sheetNameFromParams(params);
   return { sheetName };
 };
 
@@ -16,10 +26,18 @@ export const action: ActionFunction = async ({ request }) => {
   const url = new URL(request.url);
   const sheetName = url.pathname.split("/")[1];
   const formData = await request.formData();
-  const data = Object.fromEntries(formData);
   
-  await staffStudentDataLayer.addData(data, sheetName);
-  return redirect(`/${sheetName}`);
+  // Convert FormData to a plain object
+  const data = {};
+  formData.forEach((value, key) => {
+    data[key] = value;
+  });
+
+  // Capitalize first letter of sheetName for consistency
+  const normalizedSheetName = sheetName.charAt(0).toUpperCase() + sheetName.slice(1);
+  
+  await staffStudentDataLayer.addData(data, normalizedSheetName);
+  return redirect(`/${sheetName.toLowerCase()}`);
 };
 
 export default function ProfileAddPage() {
