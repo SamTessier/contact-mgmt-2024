@@ -79,14 +79,13 @@ export default function HomePage() {
         <Select
           value={selectedDay}
           onValueChange={setSelectedDay}
-          options={[
-            { value: 'M', label: 'Monday' },
-            { value: 'T', label: 'Tuesday' },
-            { value: 'W', label: 'Wednesday' },
-            { value: 'TH', label: 'Thursday' },
-            { value: 'F', label: 'Friday' }
-          ]}
-        />
+        >
+          <option value="M">Monday</option>
+          <option value="T">Tuesday</option>
+          <option value="W">Wednesday</option>
+          <option value="TH">Thursday</option>
+          <option value="F">Friday</option>
+        </Select>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
