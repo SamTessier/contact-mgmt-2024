@@ -1,51 +1,45 @@
-import { LoaderFunction, ActionFunction, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { InvoiceSubmissionForm } from "@/components/ui/payables-invoice";
+import { LoaderFunction, ActionFunction, json, redirect } from "@remix-run/node";
+import { useLoaderData, useActionData } from "@remix-run/react";
+import { InvoiceForm } from "~/components/ui/invoice-form";
 import { requireUser } from "@/lib/utils";
-import { generateInvoicePDF, sendInvoiceEmail } from "app/config/invoice.server";
+import { generateInvoicePDF, sendInvoiceEmail } from "~/config/invoice.server";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
-// The loader function remains unchanged
 export const loader: LoaderFunction = async (args) => {
   try {
     await requireUser(args);
-    return { userIsAuthenticated: true };
+    return json({ userIsAuthenticated: true });
   } catch (error) {
     console.error("Failed to load data:", error);
-    throw new Response("Failed to load data", { status: 500 });
+    return redirect("/login");
   }
 };
 
-// Action function to handle the form submission
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-
-  // Parse and structure the incoming form data
-  const invoiceData = {
-    contractorName: formData.get("contractorName") as string,
-    schoolName: formData.get("schoolName") as string,
-    invoiceDate: formData.get("invoiceDate") as string,
-    days: JSON.parse(formData.get("days") as string), // Assuming `days` is a JSON string in the form data
-  };
-
-  // Validate that `days` is an array of objects with `hoursWorked` and `rateOfPay` as numbers
-  if (!Array.isArray(invoiceData.days)) {
-    throw new Error("Invalid format for days");
-  }
-
-  invoiceData.days.forEach((day, index) => {
-    if (typeof day.hoursWorked !== "number" || typeof day.rateOfPay !== "number") {
-      throw new Error(`Invalid data type for day ${index + 1}`);
-    }
-  });
-
   try {
-    // Generate the PDF invoice
-    const pdfBuffer = await generateInvoicePDF(invoiceData);
+    await requireUser({ request });
+    const formData = await request.formData();
+    
+    // Process form data
+    const data = {
+      contractorName: formData.get("contractorName"),
+      schoolName: formData.get("schoolName"),
+      invoiceDate: formData.get("invoiceDate"),
+      days: Array.from({ length: 5 }, (_, i) => ({
+        hoursWorked: Number(formData.get(`days[${i}].hoursWorked`)) || 0,
+        rateOfPay: Number(formData.get(`days[${i}].rateOfPay`)) || 0,
+      })).filter(day => day.hoursWorked > 0 && day.rateOfPay > 0),
+      suppliesAmount: Number(formData.get("suppliesAmount")) || 0,
+    };
 
-    // Send the invoice via email
-    await sendInvoiceEmail(invoiceData, pdfBuffer);
+    // Generate PDF
+    const pdfBuffer = await generateInvoicePDF(data);
+    
+    // Send email
+    await sendInvoiceEmail(data, pdfBuffer);
 
-    return json({ success: true });
+    return json({ success: true, message: "Invoice submitted successfully" });
   } catch (error) {
     console.error("Failed to process invoice:", error);
     return json({ success: false, error: error.message }, { status: 500 });
@@ -54,22 +48,27 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function InvoiceSubmissionPage() {
   const { userIsAuthenticated } = useLoaderData<{ userIsAuthenticated: boolean }>();
+  const actionData = useActionData();
+
+  // Show success/error messages
+  useEffect(() => {
+    if (actionData?.success) {
+      toast.success("Invoice submitted successfully!");
+    } else if (actionData?.error) {
+      toast.error(`Error: ${actionData.error}`);
+    }
+  }, [actionData]);
 
   if (!userIsAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-          <h2 className="text-2xl font-bold mb-4">Unauthorized</h2>
-          <p>You do not have permission to view this page.</p>
-        </div>
-      </div>
-    );
+    return <Navigate to="/login" />;
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold mb-8">Submit Your Invoice</h1>
-      <InvoiceSubmissionForm />
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h1 className="text-2xl font-bold mb-6">Submit Invoice</h1>
+        <InvoiceForm />
+      </div>
     </div>
   );
 }

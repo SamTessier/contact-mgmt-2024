@@ -52,11 +52,13 @@ export default function Index() {
     <div>
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
         <div className="flex justify-between items-center p-8">
-          <img 
-            src={logo} 
-            alt="ASP PAL Logo" 
-            className="w-48 h-auto mx-auto"
-          />
+          <Link to="/">
+            <img 
+              src={logo} 
+              alt="ASP PAL Logo" 
+              className="w-48 h-auto mx-auto"
+            />
+          </Link>
         </div>
 
         {userIsAuthenticated && !isAuthPage && (
@@ -71,9 +73,9 @@ export default function Index() {
                 Staff
               </Button>
             </NavLink>
-            <NavLink to="/accounting">
+            <NavLink to="/getpaid">
               <Button className="button-style px-6">
-                Accounting
+                Get Paid
               </Button>
             </NavLink>
             <NavLink to="/logout" className="text-blue-600 hover:text-blue-800 self-center">
