@@ -22,6 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./alert-dialog";
+import { useNavigate } from "@remix-run/react";
 
 export function ProfileViewModal({
   isOpen,
@@ -29,8 +30,15 @@ export function ProfileViewModal({
   profile,
   onUpdate,
   sheetName,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  profile: any;
+  onUpdate?: () => void;
+  sheetName: 'Staff' | 'Students';
 }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const navigate = useNavigate();
 
   if (!profile) return null;
 
@@ -137,7 +145,7 @@ export function ProfileViewModal({
                     const searchParams = new URLSearchParams({
                       email: profile.email,
                     });
-                    window.location.href = `${path}?${searchParams}`;
+                    navigate(`${path}?${searchParams}`);
                   }}
                 >
                   <Edit2 className="w-4 h-4 mr-2" />

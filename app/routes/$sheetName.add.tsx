@@ -1,13 +1,12 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { Form, useNavigate, useLoaderData } from "@remix-run/react";
-import { useParams } from "@remix-run/react";
+import { Form, useNavigate, useLoaderData, Params } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import invariant from "tiny-invariant";
 
-const sheetNameFromParams = (params) => {
+const sheetNameFromParams = (params: Params) => {
   let sheetName = params.sheetName;
   invariant(sheetName, "Missing sheet name");
   sheetName = sheetName.toLowerCase();

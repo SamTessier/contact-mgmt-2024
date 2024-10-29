@@ -5,8 +5,9 @@ import { staffStudentDataLayer } from '~/data/initializedatalayer.server';
 import invariant from "tiny-invariant";
 import { FormField } from "@/components/ui/form-field";
 import { Button } from "@/components/ui/button";
+import type { Params } from "@remix-run/react";
 
-const sheetNameFromParams = (params) => {
+const sheetNameFromParams = (params: Params) => {
   let sheetName = params.sheetName;
   invariant(sheetName, "Missing sheet name");
   sheetName = sheetName.toLowerCase();
