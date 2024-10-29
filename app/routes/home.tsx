@@ -3,7 +3,15 @@ import { useLoaderData } from "@remix-run/react";
 import { LoaderFunction, redirect } from "@remix-run/node";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 import { requireUser } from "@/lib/utils";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -76,15 +84,20 @@ export default function HomePage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <Select
-          value={selectedDay}
-          onValueChange={setSelectedDay}
-        >
-          <option value="M">Monday</option>
-          <option value="T">Tuesday</option>
-          <option value="W">Wednesday</option>
-          <option value="TH">Thursday</option>
-          <option value="F">Friday</option>
+        <Select value={selectedDay} onValueChange={setSelectedDay}>
+          <SelectTrigger className="w-[280px]">
+            <SelectValue placeholder="Select a day" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Weekdays</SelectLabel>
+              <SelectItem value="M">Monday</SelectItem>
+              <SelectItem value="T">Tuesday</SelectItem>
+              <SelectItem value="W">Wednesday</SelectItem>
+              <SelectItem value="TH">Thursday</SelectItem>
+              <SelectItem value="F">Friday</SelectItem>
+            </SelectGroup>
+          </SelectContent>
         </Select>
       </div>
 
