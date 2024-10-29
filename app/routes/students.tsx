@@ -15,15 +15,14 @@ export const loader: LoaderFunction = async (args) => {
   console.log("Loading students data...");
   try {
     await requireUser(args);
-    const students = await staffStudentDataLayer.getData("Students");
+    const { students } = await staffStudentDataLayer.getData("Students");
     console.log("Loaded students data:", students);
     return { students };
-
   } catch (error) {
     console.error("Failed to load students data:", error);
-return redirect("/login");
+    return redirect("/login");
   }
-}
+};
 
 export default function Students() {
   const data = useLoaderData<{ students: any[] }>();

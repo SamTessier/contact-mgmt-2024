@@ -15,10 +15,9 @@ export const loader: LoaderFunction = async (args) => {
   console.log("Loading staff data...");
   try {
     await requireUser(args);
-    const staff = await staffStudentDataLayer.getData("Staff");
+    const { staff } = await staffStudentDataLayer.getData("Staff");
     console.log("Loaded staff data:", staff);
     return { staff };
-
   } catch (error) {
     console.error("Failed to load staff data:", error);
     return redirect("/login");
