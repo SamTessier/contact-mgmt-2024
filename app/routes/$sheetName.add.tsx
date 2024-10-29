@@ -1,5 +1,5 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { Form, useNavigate, useLoaderData, Params } from "@remix-run/react";
+import { Form, useNavigate, useLoaderData, Params, json } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const sheetName = params.sheetName;
-  invariant(sheetName, "Missing sheet name");
-  
+  const sheetName = params.sheetName?.toLowerCase() === "students" ? "Students" : "Staff";
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
