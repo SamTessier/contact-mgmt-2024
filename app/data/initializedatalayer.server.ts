@@ -21,16 +21,20 @@ if (dataSource === 'mysql') {
   
   if (credentialsJson) {
     try {
+      console.log('📝 Writing credentials file...');
       writeFileSync(
         credentialsPath,
         Buffer.from(credentialsJson, 'base64').toString()
       );
-      console.log('✅ Successfully wrote credentials file');
+      console.log('✅ Successfully wrote credentials file to:', credentialsPath);
+      console.log('📄 File contents exist:', require('fs').existsSync(credentialsPath));
     } catch (error) {
       console.error('❌ Failed to write credentials file:', error);
+      throw error; // This will help us see the error in logs
     }
   } else {
-    console.error('❌ No credentials JSON found in environment');
+    console.error('❌ No GOOGLE_CREDENTIALS_JSON found in environment');
+    console.log('Available env vars:', Object.keys(process.env));
   }
 
   staffStudentDataLayer = new GoogleSheetsDataLayer(
