@@ -88,7 +88,7 @@ export default function HomePage() {
           <SelectTrigger className="w-[280px]">
             <SelectValue placeholder="Select a day" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             <SelectGroup>
               <SelectLabel>Weekdays</SelectLabel>
               <SelectItem value="M">Monday</SelectItem>
@@ -133,12 +133,15 @@ export default function HomePage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Ratio</CardTitle>
+            <CardTitle className="text-sm font-medium">Today's Average Ratio</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {calculateSchoolRatios().reduce((acc, { ratio }) => acc + parseFloat(ratio), 0) / calculateSchoolRatios().length || 0}:1
+              {(
+                calculateSchoolRatios().reduce((acc, { ratio }) => acc + parseFloat(ratio), 0) /
+                calculateSchoolRatios().length || 0
+              ).toFixed(2)}:1
             </div>
           </CardContent>
         </Card>
