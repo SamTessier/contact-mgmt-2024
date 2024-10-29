@@ -15,7 +15,8 @@ export const loader: LoaderFunction = async (args) => {
   console.log("Loading staff data...");
   try {
     await requireUser(args);
-    const { staff } = await staffStudentDataLayer.getData("Staff");
+    const data = await staffStudentDataLayer.getData("Staff");
+    const staff = 'staff' in data ? data.staff : [];
     console.log("Loaded staff data:", staff);
     return { staff };
   } catch (error) {
@@ -39,7 +40,7 @@ export default function Staff() {
   };
   
   const handleAddProfile = () => {
-    navigate(`/${sheetName.toLowerCase()}/add`);
+    navigate('/staff/add');
   };
 
   const filteredStaff = staff.filter((member) => {

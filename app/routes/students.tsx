@@ -15,7 +15,8 @@ export const loader: LoaderFunction = async (args) => {
   console.log("Loading students data...");
   try {
     await requireUser(args);
-    const { students } = await staffStudentDataLayer.getData("Students");
+    const result = await staffStudentDataLayer.getData("Students");
+    const students = 'students' in result ? result.students : [];
     console.log("Loaded students data:", students);
     return { students };
   } catch (error) {
@@ -40,7 +41,7 @@ export default function Students() {
   };
 
   const handleAddProfile = () => {
-    navigate(`/${sheetName.toLowerCase()}/add`);
+    navigate(`students/add`);
   };
 
   const filteredStudents = students.filter((student) => {

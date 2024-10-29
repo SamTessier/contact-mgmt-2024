@@ -26,7 +26,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!email) throw new Error("Email parameter is required");
 
   const result = await staffStudentDataLayer.getData(sheetName);
-  const dataArray = sheetName === "Staff" ? result.staff : result.students;
+  const dataArray = sheetName === "Staff" 
+    ? ('staff' in result ? result.staff : [])
+    : ('students' in result ? result.students : []);
   
   if (!dataArray) throw new Error(`No ${sheetName.toLowerCase()} data found`);
   

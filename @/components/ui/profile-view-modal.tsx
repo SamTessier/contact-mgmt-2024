@@ -140,12 +140,11 @@ export function ProfileViewModal({
                 <Button
                   variant="default" // Changed from className override
                   onClick={() => {
-                    onClose();
-                    const path = `/${sheetName.toLowerCase()}/edit`;
+                    
                     const searchParams = new URLSearchParams({
                       email: profile.email,
                     });
-                    navigate(`${path}?${searchParams}`);
+                    navigate(`/${sheetName.toLowerCase()}/edit?${searchParams}`);
                   }}
                 >
                   <Edit2 className="w-4 h-4 mr-2" />
