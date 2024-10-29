@@ -26,7 +26,10 @@ return redirect("/login");
 }
 
 export default function Students() {
-  const { students } = useLoaderData<{ students: any[] }>();
+  const data = useLoaderData<{ students: any[] }>();
+  // Add default empty array if students is null
+  const students = data?.students || [];
+  
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);

@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Search, PlusCircle } from "lucide-react";
 
 export default function Staff() {
-  const { staff } = useLoaderData<{ staff: any[] }>();
+  const data = useLoaderData<{ staff: any[] }>();
+  const staff = data?.staff || [];
+  
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const navigate = useNavigate();
 
-  const handleProfileClick = (profile) => {
+  const handleProfileClick = (profile: any) => {
     setSelectedProfile(profile);
     setIsModalOpen(true);
   };
