@@ -86,7 +86,7 @@ export async function requireUser({ request }) {
   const userId = session.get("userId");
 
   if (!userId) {
-    throw redirect("/login");
+    return redirect("/login");
   }
 
   return session;
