@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
-import { ProfileViewModal } from "@/components/profile-view-modal";
+import { ProfileViewModal } from "@/components/ui/profile-view-modal";
 import { getStaffColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { Search, PlusCircle } from "lucide-react";

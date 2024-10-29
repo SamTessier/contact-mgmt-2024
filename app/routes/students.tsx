@@ -4,7 +4,7 @@ import { LoaderFunction, redirect } from "@remix-run/node";
 import { requireUser } from "@/lib/utils";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
-import { ProfileViewModal } from "@/components/profile-view-modal";
+import { ProfileViewModal } from "@/components/ui/profile-view-modal";
 import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "../data/initializedatalayer.server";
