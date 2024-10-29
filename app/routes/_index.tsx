@@ -75,6 +75,7 @@ export default function Index() {
               Logout
             </NavLink>
           </div>
+
         )}
 
         <Outlet />

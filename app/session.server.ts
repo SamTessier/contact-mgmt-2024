@@ -1,5 +1,7 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
   cookie: {
     name: "__session",
@@ -7,7 +9,9 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
     sameSite: "lax",
     path: "/",
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    domain: isProduction ? ".fly.dev" : undefined,
   },
 });
 
