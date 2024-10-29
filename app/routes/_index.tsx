@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/utils";
-import logo from "@/assets/asp-pal-logo.jpeg";
+import logo from "@/assets/asp-pal-logo.png";
 
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "ASP PAL - Student Management" },
+    { name: "description", content: "ASP PAL Student and Staff Management System" },
   ];
 };
 
@@ -23,7 +23,7 @@ export const loader: LoaderFunction = async (args) => {
   try {
     const user = await requireUser(args); 
     if (user) {
-      return redirect("/students");
+      return redirect("/home");
     } else {
       return redirect("/login");
     }
@@ -52,53 +52,59 @@ export default function Index() {
     <div>
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
         <div className="flex justify-between items-center p-8">
-        <img src={logo} alt="ASP PAL Logo" style={{ width: '200px', height: 'auto' }} />
-          {userIsAuthenticated && (
-            <Link to="/logout" className="text-blue-600 underluine">
-              Logout
-            </Link>
-          )}
+          <img 
+            src={logo} 
+            alt="ASP PAL Logo" 
+            className="w-48 h-auto mx-auto"
+          />
         </div>
 
-        {!isAuthPage && userIsAuthenticated && (
-          <div className="flex justify-center mb-4">
-            <NavLink to="/students" className="mr-4">
-              <Button className="button-style">Students</Button>
+        {userIsAuthenticated && !isAuthPage && (
+          <div className="flex justify-center gap-4 mb-8">
+            <NavLink to="/students">
+              <Button className="button-style px-6">
+                Students
+              </Button>
             </NavLink>
-            <NavLink to="/staff" className="mr-4">
-              <Button className="button-style">Staff</Button>
+            <NavLink to="/staff">
+              <Button className="button-style px-6">
+                Staff
+              </Button>
             </NavLink>
-            <NavLink to="/accounting" className="mr-4">
-              <Button className="button-style">Accounting</Button>
+            <NavLink to="/accounting">
+              <Button className="button-style px-6">
+                Accounting
+              </Button>
             </NavLink>
-            <NavLink to="/logout" className="text-blue-600 underline">
+            <NavLink to="/logout" className="text-blue-600 hover:text-blue-800 self-center">
               Logout
             </NavLink>
           </div>
-
         )}
 
         <Outlet />
 
-        {userIsAuthenticated && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="button-style" variant="outline">
-                {monthNames[selectedMonth]}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {months.map((month) => (
-                <DropdownMenuItem
-                  className="dropdown-menu-item"
-                  key={month.value}
-                  onClick={() => setSelectedMonth(month.value)}
-                >
-                  {month.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {userIsAuthenticated && !isAuthPage && (
+          <div className="flex justify-center mt-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="button-style" variant="outline">
+                  {monthNames[selectedMonth]}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {months.map((month) => (
+                  <DropdownMenuItem
+                    className="dropdown-menu-item"
+                    key={month.value}
+                    onClick={() => setSelectedMonth(month.value)}
+                  >
+                    {month.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )}
       </div>
     </div>
