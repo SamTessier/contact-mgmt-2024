@@ -1,35 +1,56 @@
 import { DataLayer } from "./datalayer";
 import { google } from 'googleapis';
 
+// Import the Google Sheets functions
+import { 
+  gsGetData, 
+  gsAddData, 
+  gsUpdateData, 
+  gsDeleteData 
+} from './googlesheetsfunctions';  // Create this file if it doesn't exist
+
 class GoogleSheetsDataLayer implements DataLayer {
   private authClient: any;
 
   constructor(private spreadsheetId: string) {
+    console.log('📊 Creating GoogleSheetsDataLayer with spreadsheet ID:', spreadsheetId);
     this.authClient = null;
   }
 
   async authenticate() {
     try {
-      console.log('🔍 Starting authentication process...');
+      console.log('🔍 Starting Google Sheets authentication...');
       
       const credentialsJson = process.env.GOOGLE_CREDENTIALS_JSON;
+      console.log('📦 Raw credentials exist:', !!credentialsJson);
+      console.log('📦 Credentials type:', typeof credentialsJson);
+      
       if (!credentialsJson) {
-        console.error('❌ No credentials found in environment');
+        console.error('❌ No Google credentials found in environment');
         throw new Error('GOOGLE_CREDENTIALS_JSON not found in environment');
       }
 
-      // Create credentials object directly
-      const auth = new google.auth.GoogleAuth({
-        credentials: JSON.parse(credentialsJson),
-        scopes: ['https://www.googleapis.com/auth/spreadsheets']
-      });
+      try {
+        const parsedCreds = JSON.parse(credentialsJson);
+        console.log('✅ Google credentials parsed successfully');
+        console.log('🔑 Project ID:', parsedCreds.project_id);
+        console.log('📧 Service Account:', parsedCreds.client_email);
 
-      console.log('✅ Auth object created');
-      const client = await auth.getClient();
-      console.log('✅ Client obtained successfully');
-      return client;
+        const auth = new google.auth.GoogleAuth({
+          credentials: parsedCreds,
+          scopes: ['https://www.googleapis.com/auth/spreadsheets']
+        });
+
+        console.log('✅ Google auth object created');
+        this.authClient = await auth.getClient();
+        console.log('✅ Google client obtained successfully');
+        return this.authClient;
+      } catch (parseError) {
+        console.error('💥 Error parsing Google credentials:', parseError);
+        throw parseError;
+      }
     } catch (error) {
-      console.error('❌ Authentication failed:', error);
+      console.error('❌ Google Sheets authentication failed:', error);
       throw error;
     }
   }
