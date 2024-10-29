@@ -15,10 +15,10 @@ export const loader: LoaderFunction = async ({ params }) => {
 export const action: ActionFunction = async ({ request }) => {
   const url = new URL(request.url);
   const sheetName = url.pathname.split("/")[1];
-  const data = Object.fromEntries(new URLSearchParams(await request.text()));
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  
   await staffStudentDataLayer.addData(data, sheetName);
-  console.log("Form Data:", data); // Debugging statement
-  console.log("Sheet Name:", sheetName); // Debugging statement
   return redirect(`/${sheetName}`);
 };
 

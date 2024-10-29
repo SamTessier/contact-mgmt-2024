@@ -1,7 +1,15 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./dialog";
 import { Button } from "./button";
 import { Badge } from "./badge";
-import { Edit2, Mail, Phone, MapPin, Calendar, Users, Trash2 } from "lucide-react";
+import {
+  Edit2,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Users,
+  Trash2,
+} from "lucide-react";
 import { InfoCard } from "./info-card";
 import { useState } from "react";
 import {
@@ -15,22 +23,29 @@ import {
   AlertDialogTitle,
 } from "./alert-dialog";
 
-export function ProfileViewModal({ isOpen, onClose, profile, onUpdate, sheetName }) {
+export function ProfileViewModal({
+  isOpen,
+  onClose,
+  profile,
+  onUpdate,
+  sheetName,
+}) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   if (!profile) return null;
 
-  const displayName = sheetName === "Staff" 
-    ? `${profile.firstName} ${profile.lastName}`
-    : profile.studentName;
+  const displayName =
+    sheetName === "Staff"
+      ? `${profile.firstName} ${profile.lastName}`
+      : profile.studentName;
 
   const handleDelete = async () => {
     try {
       const formData = new FormData();
-      formData.append('email', profile.email);
+      formData.append("email", profile.email);
 
       const response = await fetch(`/${sheetName.toLowerCase()}/delete`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
@@ -40,7 +55,7 @@ export function ProfileViewModal({ isOpen, onClose, profile, onUpdate, sheetName
         window.location.href = `/${sheetName.toLowerCase()}`;
       }
     } catch (error) {
-      console.error('Error deleting profile:', error);
+      console.error("Error deleting profile:", error);
     }
   };
 
@@ -53,40 +68,57 @@ export function ProfileViewModal({ isOpen, onClose, profile, onUpdate, sheetName
               <span className="text-2xl font-bold text-gray-900">
                 {displayName}
               </span>
-              <Badge variant="outline" className="bg-primary-50 text-primary-700">
+              <Badge
+                variant="outline"
+                className="bg-primary-50 text-primary-700"
+              >
                 {sheetName}
               </Badge>
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="mt-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InfoCard icon={<Mail className="h-5 w-5" />} title="Contact" items={[
-                { label: "Email", value: profile.email },
-                { label: "Phone One", value: profile.phoneOne },
-                { label: "Phone Two", value: profile.phoneTwo || 'N/A' }
-              ]} />
-              
-              <InfoCard icon={<MapPin className="h-5 w-5" />} title="Location" items={[
-                { label: "School", value: profile.school }
-              ]} />
-              
-              <InfoCard icon={<Calendar className="h-5 w-5" />} title="Schedule" items={[
-                { label: "Weekly Schedule", value: profile.weeklySchedule }
-              ]} />
+              <InfoCard
+                icon={<Mail className="h-5 w-5" />}
+                title="Contact"
+                items={[
+                  { label: "Email", value: profile.email },
+                  { label: "Phone One", value: profile.phoneOne },
+                  { label: "Phone Two", value: profile.phoneTwo || "N/A" },
+                ]}
+              />
+
+              <InfoCard
+                icon={<MapPin className="h-5 w-5" />}
+                title="Location"
+                items={[{ label: "School", value: profile.school }]}
+              />
+
+              <InfoCard
+                icon={<Calendar className="h-5 w-5" />}
+                title="Schedule"
+                items={[
+                  { label: "Weekly Schedule", value: profile.weeklySchedule },
+                ]}
+              />
 
               {/* Additional info for students */}
               {sheetName === "Students" && (
-                <InfoCard icon={<Users className="h-5 w-5" />} title="Family" items={[
-                  { label: "Parent One", value: profile.parentOne || 'N/A' },
-                  { label: "Parent Two", value: profile.parentTwo || 'N/A' }
-                ]} />
+                <InfoCard
+                  icon={<Users className="h-5 w-5" />}
+                  title="Family"
+                  items={[
+                    { label: "Parent One", value: profile.parentOne || "N/A" },
+                    { label: "Parent Two", value: profile.parentTwo || "N/A" },
+                  ]}
+                />
               )}
             </div>
-            
+
             <div className="border-t pt-6 flex justify-between space-x-4">
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 onClick={() => setShowDeleteDialog(true)}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
@@ -97,11 +129,15 @@ export function ProfileViewModal({ isOpen, onClose, profile, onUpdate, sheetName
                 <Button variant="outline" onClick={onClose}>
                   Close
                 </Button>
-                <Button 
-                  className="bg-primary-600 hover:bg-primary-700 text-white"
+                <Button
+                  variant="default" // Changed from className override
                   onClick={() => {
                     onClose();
-                    window.location.href = `/${sheetName.toLowerCase()}/edit?email=${profile.email}`;
+                    const path = `/${sheetName.toLowerCase()}/edit`;
+                    const searchParams = new URLSearchParams({
+                      email: profile.email,
+                    });
+                    window.location.href = `${path}?${searchParams}`;
                   }}
                 >
                   <Edit2 className="w-4 h-4 mr-2" />
@@ -118,8 +154,8 @@ export function ProfileViewModal({ isOpen, onClose, profile, onUpdate, sheetName
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete {displayName}'s profile
-              and remove all associated data.
+              This action cannot be undone. This will permanently delete{" "}
+              {displayName}'s profile and remove all associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
