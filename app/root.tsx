@@ -4,6 +4,7 @@ import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, NavLink, u
 import { SelectedMonthProvider } from "context/selectedMonthContext";
 import styles from "../dist/output.css";
 import logo from "@/assets/asp-pal-logo.png";
+import { Footer } from "@/components/ui/footer";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
@@ -35,7 +36,7 @@ export default function App() {
       </head>
       <body className="h-full">
         <SelectedMonthProvider>
-          <div className="relative flex h-full">
+          <div className="relative min-h-screen flex flex-col">
             <div className={`flex-1 transition-all duration-300 ease-in-out ${isOpen ? 'ml-64' : 'ml-0'}`}>
               <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex-1">
                 <div className="flex items-center justify-between py-4">
@@ -66,6 +67,7 @@ export default function App() {
                 <Outlet />
               </div>
             </div>
+            {!isAuthPage && <Footer />}
           </div>
         </SelectedMonthProvider>
         <ScrollRestoration />
