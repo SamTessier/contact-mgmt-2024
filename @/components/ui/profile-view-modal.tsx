@@ -67,6 +67,13 @@ export function ProfileViewModal({
     }
   };
 
+  const handleEditClick = () => {
+    const searchParams = new URLSearchParams({
+      email: profile.email,
+    });
+    navigate(`/${sheetName}/edit?${searchParams}`);
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -139,13 +146,7 @@ export function ProfileViewModal({
                 </Button>
                 <Button
                   variant="default" // Changed from className override
-                  onClick={() => {
-                    
-                    const searchParams = new URLSearchParams({
-                      email: profile.email,
-                    });
-                    navigate(`/${sheetName.toLowerCase()}/edit?${searchParams}`);
-                  }}
+                  onClick={handleEditClick}
                 >
                   <Edit2 className="w-4 h-4 mr-2" />
                   Edit Profile

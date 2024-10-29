@@ -41,7 +41,7 @@ export default function Students() {
   };
 
   const handleAddProfile = () => {
-    navigate(`students/add`);
+    navigate(`Students/add`);
   };
 
   const filteredStudents = students.filter((student) => {
