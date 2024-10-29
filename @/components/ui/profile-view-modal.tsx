@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Mail, Phone, MapPin, Calendar } from "lucide-react";
+import { InfoCard } from "@/components/ui/info-card";
 
 export function ProfileViewModal({ isOpen, onClose, profile, onUpdate, sheetName }) {
   if (!profile) return null;
