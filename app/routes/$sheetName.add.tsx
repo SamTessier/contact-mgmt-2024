@@ -7,40 +7,33 @@ import { FormField } from "@/components/ui/form-field";
 import invariant from "tiny-invariant";
 
 const sheetNameFromParams = (params: Params) => {
-  let sheetName = params.sheetName;
+  let sheetName = params.sheetName?.toLowerCase();
   invariant(sheetName, "Missing sheet name");
-  sheetName = sheetName.toLowerCase();
   sheetName = sheetName.charAt(0).toUpperCase() + sheetName.slice(1);
   invariant(sheetName === "Students" || sheetName === "Staff", "Invalid sheet name");
   return sheetName;
 };
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const sheetName = sheetNameFromParams(params);
-  return { sheetName };
+  const sheetName = params.sheetName;
+  invariant(sheetName, "Missing sheet name");
+  return json({ sheetName });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const sheetName = sheetNameFromParams(params);
+  const sheetName = params.sheetName;
+  invariant(sheetName, "Missing sheet name");
+  
   const formData = await request.formData();
-  
-  // Convert FormData to a plain object
-  const data = {};
-  formData.forEach((value, key) => {
-    data[key] = value;
-  });
+  const data = Object.fromEntries(formData);
 
-  console.log('Adding data:', { sheetName, data }); // Debug log
-  
   try {
     await staffStudentDataLayer.addData(data, sheetName);
     return redirect(`/${sheetName.toLowerCase()}`);
   } catch (error) {
-    console.error('Error adding data:', error);
-    throw error;
+    return json({ error: error.message }, { status: 400 });
   }
 };
-
 export default function ProfileAddPage() {
   const { sheetName } = useLoaderData<{ sheetName: string }>();
   const navigate = useNavigate();
@@ -183,3 +176,4 @@ export default function ProfileAddPage() {
     </div>
   );
 }
+

@@ -71,7 +71,7 @@ export function ProfileViewModal({
     const searchParams = new URLSearchParams({
       email: profile.email,
     });
-    navigate(`/${sheetName}/edit?${searchParams}`);
+    navigate(`/${sheetName.toLowerCase()}/edit?${searchParams}`);
   };
 
   return (

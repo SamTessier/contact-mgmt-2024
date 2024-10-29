@@ -40,7 +40,7 @@ export default function Staff() {
   };
   
   const handleAddProfile = () => {
-    navigate('/Staff/add');
+    navigate('/staff/add');
   };
 
   const filteredStaff = staff.filter((member) => {
