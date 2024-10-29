@@ -3,7 +3,7 @@ import { LinksFunction } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, NavLink, useLocation } from "@remix-run/react";
 import { SelectedMonthProvider } from "context/selectedMonthContext";
 import styles from "../dist/output.css";
-import logo from "@/assets/asp-pal-logo.jpeg";
+import logo from "@/assets/asp-pal-logo.png";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
