@@ -14,9 +14,7 @@ import { Users, UserCheck, School, Calendar } from "lucide-react";
 export const loader: LoaderFunction = async (args) => {
   try {
     await requireUser(args);
-    const staff = await staffStudentDataLayer.getData("Staff");
-    const students = await staffStudentDataLayer.getData("Students");
-    
+    const { staff, students } = await staffStudentDataLayer.getData("Staff");
     return { staff, students };
   } catch (error) {
     console.error("Failed to load data:", error);
