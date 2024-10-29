@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderFunction, redirect } from "@remix-run/node";
 import { requireUser } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStudentColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { staffStudentDataLayer } from "../data/initializedatalayer.server";
+import { Search, PlusCircle } from "lucide-react";
 
 
 export const loader: LoaderFunction = async (args) => {

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStaffColumns } from "./columns";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react"; // Import Lucide icon
+import { Search, PlusCircle } from "lucide-react";
 
 export default function Staff() {
   const { staff } = useLoaderData<{ staff: any[] }>();
