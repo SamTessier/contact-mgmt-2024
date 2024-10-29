@@ -17,7 +17,6 @@ const sheetNameFromParams = (params: Params) => {
 
 export const loader: LoaderFunction = async ({ params }) => {
   const sheetName = sheetNameFromParams(params);
-  console.log("Add page - Sheet name:", sheetName); // Debug log
   return { sheetName };
 };
 
@@ -43,13 +42,20 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function ProfileAddPage() {
-  const { sheetName } = useLoaderData();
+  const { sheetName } = useLoaderData<{ sheetName: string }>();
   const navigate = useNavigate();
+
+  if (!sheetName) {
+    console.error("Sheet name is missing");
+    return <div>Error: Invalid sheet name</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">Add New {sheetName === "Students" ? "Student" : "Staff Member"}</h2>
+        <h2 className="text-2xl font-bold mb-6">
+          Add New {sheetName === "Students" ? "Student" : "Staff Member"}
+        </h2>
         
         <Form method="post" className="space-y-6">
           {sheetName === "Students" ? (
