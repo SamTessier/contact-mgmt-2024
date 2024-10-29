@@ -52,7 +52,7 @@ export default function Index() {
     <div>
       <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
         <div className="flex justify-between items-center p-8">
-        <img src={logo} alt="Logo" style={{ width: '200px', height: 'auto' }} />
+        <img src={logo} alt="ASP PAL Logo" style={{ width: '200px', height: 'auto' }} />
           {userIsAuthenticated && (
             <Link to="/logout" className="text-blue-600 underluine">
               Logout

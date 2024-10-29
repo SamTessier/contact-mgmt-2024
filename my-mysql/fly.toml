@@ -1,0 +1,26 @@
+# fly.toml app configuration file generated for my-mysql-thrumming-silence-5056 on 2024-09-11T20:04:34-02:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'my-mysql-thrumming-silence-5056'
+primary_region = 'ewr'
+
+[build]
+  image = 'mysql:8'
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[processes]
+  app = """--datadir /data/mysql \
+   --mysql-native-password=ON"""
+
+[mounts]
+  source = "mysqldata"
+  destination = "/data"
+
+[env]
+  MYSQL_DATABASE = "mydb"
