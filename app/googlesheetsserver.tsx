@@ -20,19 +20,23 @@ export async function getData(auth: any, spreadsheetId: string, sheetName: strin
 
   const staffRes = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: 'Staff!A2:F101',
+    range: 'Staff!A2:F1000',
   });
   const staffRows = staffRes.data.values || [];
-  const staff = staffRows.map(row => Object.fromEntries(row.map((cell, index) => [staffHeaders[index], cell])));
+  const staff = staffRows
+    .map(row => Object.fromEntries(row.map((cell, index) => [staffHeaders[index], cell])))
+    .filter(staff => staff.firstName && staff.lastName);
 
   const studentsRes = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: 'Students!A2:I401',
+    range: 'Students!A2:I1000',
   });
   const studentsRows = studentsRes.data.values || [];
-  const students = studentsRows.map(row => Object.fromEntries(row.map((cell, index) => [studentHeaders[index], cell])));
+  const students = studentsRows
+    .map(row => Object.fromEntries(row.map((cell, index) => [studentHeaders[index], cell])))
+    .filter(student => student.studentName);
 
-  return [...staff, ...students];
+  return { staff, students };
 }
 
 export async function addData(auth: any, spreadsheetId: string, data: any, sheetName: string) {
