@@ -3,6 +3,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+console.log("Attempting database connection with:", {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+});
+
 const pool = await mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -60,5 +67,16 @@ export const setupDb = async () => {
     connection.release();
   }
 };
+
+// Test connection immediately
+pool.getConnection()
+  .then(connection => {
+    console.log("✅ Database connected successfully");
+    connection.release();
+  })
+  .catch(err => {
+    console.error("❌ Database connection failed:", err);
+    throw err; // This will help catch connection issues early
+  });
 
 export default pool;

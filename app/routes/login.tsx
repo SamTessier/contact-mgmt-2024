@@ -4,28 +4,48 @@ import { authenticateUser } from "../auth";
 import { getSession, commitSession } from "app/session.server";
 
 export const action: ActionFunction = async ({ request }) => {
+  console.log("📝 Login action started");
+  
   const formData = await request.formData();
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
 
+  console.log("📧 Login attempt for email:", email);
+
   if (!email || !password) {
+    console.log("❌ Missing email or password");
     return json({ error: "Email and password are required" }, { status: 400 });
   }
 
-  const user = await authenticateUser({ email, password });
+  try {
+    console.log("🔐 Attempting authentication...");
+    const user = await authenticateUser({ email, password });
+    console.log("🔑 Authentication result:", user ? "Success" : "Failed");
 
-  if (!user) {
-    return json({ error: "Invalid credentials" }, { status: 400 });
+    if (!user) {
+      console.log("❌ Invalid credentials");
+      return json({ error: "Invalid credentials" }, { status: 400 });
+    }
+
+    console.log("📦 Creating session...");
+    const session = await getSession(request.headers.get("Cookie"));
+    session.set("userId", user.id);
+
+    console.log("✅ Session created for user:", user.id);
+    console.log("🔄 Redirecting to /students");
+
+    return redirect("/students", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  } catch (error) {
+    console.error("💥 Login error:", error);
+    return json({ 
+      error: "An error occurred during login",
+      details: error.message 
+    }, { status: 500 });
   }
-
-  const session = await getSession(request.headers.get("Cookie"));
-  session.set("userId", user.id);
-
-  return redirect("/students", {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
 };
 
 type ActionData = {

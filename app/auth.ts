@@ -32,21 +32,31 @@ export async function authenticateUser({
   email: string;
   password: string;
 }) {
+  console.log("🔍 Authenticating user:", email);
+  
   try {
+    console.log("📊 Querying database...");
     const [results] = await connection.query(
       "SELECT * FROM users WHERE email = ?",
       [email]
     );
+    console.log("📊 Query results length:", results.length);
 
-    if (
-      results.length > 0 &&
-      (await bcrypt.compare(password, results[0].password_hash))
-    ) {
-      return results[0];
+    if (results.length > 0) {
+      console.log("👤 User found, checking password...");
+      const passwordMatch = await bcrypt.compare(password, results[0].password_hash);
+      console.log("🔐 Password match:", passwordMatch);
+      
+      if (passwordMatch) {
+        console.log("✅ Authentication successful");
+        return results[0];
+      }
     }
+    
+    console.log("❌ Authentication failed");
     return null;
   } catch (error) {
-    console.error("Authentication error:", error);
-    return null;
+    console.error("💥 Authentication error:", error);
+    throw error;
   }
 }
