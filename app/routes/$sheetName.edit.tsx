@@ -3,6 +3,8 @@ import { useNavigate, useParams, Form, useLoaderData } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { staffStudentDataLayer } from '~/data/initializedatalayer.server';
 import invariant from "tiny-invariant";
+import { FormField } from "@/components/ui/form-field";
+import { Button } from "@/components/ui/button";
 
 const sheetNameFromParams = (params) => {
   let sheetName = params.sheetName;
@@ -42,159 +44,125 @@ export default function ProfileEditPage() {
   const { data, sheetName } = useLoaderData();
   const navigate = useNavigate();
 
-  const handleCancel = () => {
-    navigate(-1);
-  };
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
-        <Form method="post">
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold mb-6">Edit {sheetName} Profile</h2>
+        <Form method="post" className="space-y-6">
           {sheetName === "Students" ? (
-            <>
-              <div className="mb-4">
-                <input
-                  type="text"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <FormField
                   name="studentName"
+                  label="Student Name"
                   defaultValue={data.studentName}
-                  placeholder="Student Name"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+                <FormField
                   name="school"
+                  label="School"
                   defaultValue={data.school}
-                  placeholder="School"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="email"
+                <FormField
                   name="email"
+                  label="Email"
+                  type="email"
                   defaultValue={data.email}
-                  placeholder="Email"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
               </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+              <div className="space-y-4">
+                <FormField
                   name="phoneOne"
+                  label="Primary Phone"
                   defaultValue={data.phoneOne}
-                  placeholder="Phone One"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+                <FormField
                   name="phoneTwo"
+                  label="Secondary Phone"
                   defaultValue={data.phoneTwo}
-                  placeholder="Phone Two"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+                <FormField
                   name="weeklySchedule"
+                  label="Weekly Schedule"
                   defaultValue={data.weeklySchedule}
-                  placeholder="Weekly Schedule"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
               </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="notes"
-                  defaultValue={data.notes}
-                  placeholder="Notes"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+              <div className="col-span-2 space-y-4">
+                <FormField
                   name="parentOne"
+                  label="Primary Parent"
                   defaultValue={data.parentOne}
-                  placeholder="Parent One"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+                <FormField
                   name="parentTwo"
+                  label="Secondary Parent"
                   defaultValue={data.parentTwo}
-                  placeholder="Parent Two"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                />
+                <FormField
+                  name="notes"
+                  label="Notes"
+                  defaultValue={data.notes}
+                  component="textarea"
                 />
               </div>
-            </>
+            </div>
           ) : (
-            <>
-              <div className="mb-4">
-                <input
-                  type="text"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <FormField
                   name="firstName"
+                  label="First Name"
                   defaultValue={data.firstName}
-                  placeholder="First Name"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+                <FormField
                   name="lastName"
+                  label="Last Name"
                   defaultValue={data.lastName}
-                  placeholder="Last Name"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="school"
-                  defaultValue={data.school}
-                  placeholder="School"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="phone"
-                  defaultValue={data.phone}
-                  placeholder="Phone"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="email"
+                <FormField
                   name="email"
+                  label="Email"
+                  type="email"
                   defaultValue={data.email}
-                  placeholder="Email"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
               </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+              <div className="space-y-4">
+                <FormField
+                  name="phone"
+                  label="Phone"
+                  defaultValue={data.phone}
+                  required
+                />
+                <FormField
+                  name="school"
+                  label="School"
+                  defaultValue={data.school}
+                  required
+                />
+                <FormField
                   name="availability"
+                  label="Availability"
                   defaultValue={data.availability}
-                  placeholder="Availability"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  required
                 />
               </div>
-            </>
+            </div>
           )}
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
-          <button type="button" onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded-md">Cancel</button>
+          
+          <div className="flex justify-end space-x-4 pt-6 border-t">
+            <Button variant="outline" onClick={() => navigate(-1)}>
+              Cancel
+            </Button>
+            <Button type="submit">Save Changes</Button>
+          </div>
         </Form>
       </div>
     </div>

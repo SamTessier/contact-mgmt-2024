@@ -1,6 +1,6 @@
 import { LoaderFunction, ActionFunction, json, redirect } from "@remix-run/node";
 import { useLoaderData, useActionData } from "@remix-run/react";
-import { InvoiceForm } from "~/components/ui/invoice-form";
+import { InvoiceForm } from "@/components/ui/invoice-form";
 import { requireUser } from "@/lib/utils";
 import { generateInvoicePDF, sendInvoiceEmail } from "~/config/invoice.server";
 import { toast } from "sonner";

@@ -1,9 +1,11 @@
 import { ActionFunction } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useNavigate, useLocation } from "@remix-run/react";
 import { useParams } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
 import { LoaderFunction } from "@remix-run/node";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
 
 export const loader: LoaderFunction = async ({ params }) => {
   const { sheetName } = params;
@@ -21,149 +23,136 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ProfileAddPage() {
-  const { sheetName } = useLoaderData();
-  console.log("sheetName:", sheetName); // Debugging statement
+  const navigate = useNavigate();
+  const location = useLocation();
+  const sheetName = location.state?.sheetName?.toLowerCase() || "students";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Add New Profile</h2>
-        <Form method="post">
-          {sheetName === "staff" ? (
-            <>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="school"
-                  placeholder="School"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="Phone"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="availability"
-                  placeholder="Availability"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-            </>
-          ) : sheetName === "students" ? (
-            <>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="school"
-                  placeholder="School"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold mb-6">Add New {sheetName === "students" ? "Student" : "Staff Member"}</h2>
+        
+        <Form method="post" className="space-y-6">
+          {sheetName === "students" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <FormField
                   name="studentName"
-                  placeholder="Student Name"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  label="Student Name"
+                  required
+                  placeholder="Full Name"
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="weeklySchedule"
-                  placeholder="Weekly Schedule"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                <FormField
+                  name="school"
+                  label="School"
+                  required
+                  placeholder="School Name"
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="notes"
-                  placeholder="Notes"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="email"
+                <FormField
                   name="email"
-                  placeholder="Email"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  label="Email"
+                  type="email"
+                  required
+                  placeholder="student@example.com"
                 />
               </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+              <div className="space-y-4">
+                <FormField
                   name="phoneOne"
-                  placeholder="Phone One"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  label="Primary Phone"
+                  required
+                  placeholder="(555) 555-5555"
                 />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="parentOne"
-                  placeholder="Parent One"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
-                  name="parentTwo"
-                  placeholder="Parent Two"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="mb-4">
-                <input
-                  type="text"
+                <FormField
                   name="phoneTwo"
-                  placeholder="Phone Two"
-                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+                  label="Secondary Phone"
+                  placeholder="(555) 555-5555"
+                />
+                <FormField
+                  name="weeklySchedule"
+                  label="Weekly Schedule"
+                  required
+                  placeholder="Mon, Wed, Fri"
                 />
               </div>
-            </>
+              <div className="col-span-2 space-y-4">
+                <FormField
+                  name="parentOne"
+                  label="Primary Parent"
+                  required
+                  placeholder="Parent Name"
+                />
+                <FormField
+                  name="parentTwo"
+                  label="Secondary Parent"
+                  placeholder="Parent Name"
+                />
+                <FormField
+                  name="notes"
+                  label="Notes"
+                  component="textarea"
+                  placeholder="Any additional information..."
+                />
+              </div>
+            </div>
           ) : (
-            <p>Invalid sheet name</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <FormField
+                  name="firstName"
+                  label="First Name"
+                  required
+                  placeholder="First Name"
+                />
+                <FormField
+                  name="lastName"
+                  label="Last Name"
+                  required
+                  placeholder="Last Name"
+                />
+                <FormField
+                  name="email"
+                  label="Email"
+                  type="email"
+                  required
+                  placeholder="staff@example.com"
+                />
+              </div>
+              <div className="space-y-4">
+                <FormField
+                  name="phone"
+                  label="Phone"
+                  required
+                  placeholder="(555) 555-5555"
+                />
+                <FormField
+                  name="school"
+                  label="School"
+                  required
+                  placeholder="School Name"
+                />
+                <FormField
+                  name="availability"
+                  label="Availability"
+                  required
+                  placeholder="Mon-Fri 9am-5pm"
+                />
+              </div>
+            </div>
           )}
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Add Profile
-          </button>
+          
+          <div className="flex justify-end space-x-4 pt-6 border-t">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => navigate(-1)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">
+              Add {sheetName === "students" ? "Student" : "Staff Member"}
+            </Button>
+          </div>
         </Form>
       </div>
     </div>
