@@ -23,10 +23,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const result = await staffStudentDataLayer.getData(sheetName);
   const dataArray = sheetName === "Staff" ? result.staff : result.students;
-  invariant(dataArray, "No data found");
+  invariant(dataArray, `No ${sheetName.toLowerCase()} data found`);
   
   const data = dataArray.find(item => item.email === email);
-  invariant(data, "Profile not found");
+  invariant(data, `${sheetName} profile not found`);
 
   return { data, sheetName };
 };

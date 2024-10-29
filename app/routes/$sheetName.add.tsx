@@ -1,9 +1,8 @@
-import { ActionFunction } from "@remix-run/node";
-import { Form, useNavigate, useLocation } from "@remix-run/react";
+import { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { Form, useNavigate, useLoaderData } from "@remix-run/react";
 import { useParams } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { staffStudentDataLayer } from "~/data/initializedatalayer.server";
-import { LoaderFunction } from "@remix-run/node";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import invariant from "tiny-invariant";
@@ -41,10 +40,9 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function ProfileAddPage() {
-  const params = useParams();
+  const { sheetName } = useLoaderData();
   const navigate = useNavigate();
-  const sheetName = sheetNameFromParams(params);
-  
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="bg-white rounded-lg shadow-lg p-6">
