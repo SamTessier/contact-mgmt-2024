@@ -6,6 +6,24 @@ import { ProfileViewModal } from "@/components/profile-view-modal";
 import { getStaffColumns } from "./columns";
 import { Button } from "@/components/ui/button";
 import { Search, PlusCircle } from "lucide-react";
+import { LoaderFunction } from "@remix-run/node";
+import { staffStudentDataLayer } from "../data/initializedatalayer.server";
+import { requireUser } from "@/lib/utils";
+import { redirect } from "@remix-run/node";
+
+export const loader: LoaderFunction = async (args) => {
+  console.log("Loading staff data...");
+  try {
+    await requireUser(args);
+    const staff = await staffStudentDataLayer.getData("Staff");
+    console.log("Loaded staff data:", staff);
+    return { staff };
+
+  } catch (error) {
+    console.error("Failed to load staff data:", error);
+    return redirect("/login");
+  }
+};
 
 export default function Staff() {
   const data = useLoaderData<{ staff: any[] }>();
