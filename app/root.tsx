@@ -1,17 +1,29 @@
 import { useState } from "react";
 import { LinksFunction } from "@remix-run/node";
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, NavLink } from "@remix-run/react";
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, NavLink, useLocation } from "@remix-run/react";
 import { SelectedMonthProvider } from "context/selectedMonthContext";
 import styles from "../dist/output.css";
+import logo from "@/assets/asp-pal-logo.jpeg";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
+export const meta: MetaFunction = () => {
+  return [
+    { title: "ASP PAL" },
+    { name: "description", content: "ASP PAL Student and Staff Management System" },
+    { 
+      tagName: "link",
+      rel: "icon", 
+      href: logo,
+      type: "image/jpeg"
+    }
+  ];
+};
+
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
+  const location = useLocation();
+  const isAuthPage = ['/login', '/signup'].includes(location.pathname);
 
   return (
     <html lang="en" className="h-full">
@@ -26,20 +38,29 @@ export default function App() {
           <div className="relative flex h-full">
             <div className={`flex-1 transition-all duration-300 ease-in-out ${isOpen ? 'ml-64' : 'ml-0'}`}>
               <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex-1">
-                <nav className="flex space-x-4 py-4">
-                  <NavLink to="/students" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
-                    Students
-                  </NavLink>
-                  <NavLink to="/staff" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
-                    Staff
-                  </NavLink>
-                  <NavLink to="/accounting" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
-                    Accounting
-                  </NavLink>
-                  <NavLink to="/logout" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
-                    Log Out
-                  </NavLink>
-                </nav>
+                <div className="flex items-center justify-between py-4">
+                  <img 
+                    src={logo} 
+                    alt="ASP PAL Logo" 
+                    className="h-12 w-auto" 
+                  />
+                  {!isAuthPage && (
+                    <nav className="flex space-x-4">
+                      <NavLink to="/students" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
+                        Students
+                      </NavLink>
+                      <NavLink to="/staff" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
+                        Staff
+                      </NavLink>
+                      <NavLink to="/accounting" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
+                        Accounting
+                      </NavLink>
+                      <NavLink to="/logout" className={({ isActive }) => `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-700 hover:text-white'}`}>
+                        Log Out
+                      </NavLink>
+                    </nav>
+                  )}
+                </div>
                 <Outlet />
               </div>
             </div>
