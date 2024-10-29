@@ -53,18 +53,34 @@ export default function Students() {
   const studentColumnsWithClick = getStudentColumns(handleProfileClick);
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Students</h2>
-      <Input
-        className="border-gray-300 shadow-lg px-4 py-2 justify-center rounded-md"
-        type="text"
-        placeholder="Search..."
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-      />
-      <Button variant="primary" onClick={handleAddProfile}>
-        Add Profile
-      </Button>
+    <div className="space-y-6 p-6 pb-16">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold tracking-tight">Student Management</h2>
+        <Button onClick={handleAddProfile} className="gap-2">
+          <PlusCircle className="h-4 w-4" />
+          Add Student
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between space-x-2">
+        <div className="relative w-[300px]">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search students..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+      </div>
+
+      <div className="rounded-md border">
+        <DataTable 
+          columns={studentColumnsWithClick} 
+          data={filteredStudents}
+        />
+      </div>
+
       <ProfileViewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -72,7 +88,6 @@ export default function Students() {
         onUpdate={() => window.location.reload()}
         sheetName="Students"
       />
-      <DataTable columns={studentColumnsWithClick} data={filteredStudents}/>
     </div>
   );
 }

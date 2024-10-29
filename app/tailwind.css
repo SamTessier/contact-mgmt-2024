@@ -104,44 +104,61 @@
   }
 
   .data-table-container {
-    @apply w-full rounded-md shadow-lg;
-    background-color: white; 
-    padding: 32px;
-    vertical-align: middle;
-    max-height: 500px; 
+    @apply w-full rounded-md border;
+    background-color: hsl(var(--background));
+    max-height: 600px;
   }
 
   .table-wrapper {
-    @apply flex flex-col max-h-[500px];
+    @apply flex flex-col;
   }
 
   .table-header {
-    @apply sticky top-0 z-10 bg-white;
+    @apply bg-muted/50 sticky top-0 z-10;
   }
 
   .table-body {
-    @apply overflow-y-auto max-h-[400px];
+    @apply overflow-y-auto;
   }
 
   .table {
-    @apply w-full border-collapse;
-  }
-
-  .table th,
-  .table td {
-    @apply px-6 py-3 text-left border-b border-gray-200;
+    @apply w-full caption-bottom text-sm;
   }
 
   .table th {
-    @apply bg-gray-50;
+    @apply h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0;
+  }
+
+  .table td {
+    @apply p-4 align-middle [&:has([role=checkbox])]:pr-0;
   }
 
   .table-row {
-    @apply transition-colors hover:bg-gray-50;
+    @apply border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted;
   }
-  
+
   .sidebar {
     @apply fixed top-0 left-0 h-full bg-white shadow-md transition-transform duration-300 ease-in-out;
+  }
+
+  .dialog-content {
+    @apply p-6;
+  }
+
+  .dialog-header {
+    @apply mb-4 text-left;
+  }
+
+  .dialog-footer {
+    @apply mt-6 flex justify-end space-x-2;
+  }
+
+  .field-label {
+    @apply font-medium text-muted-foreground;
+  }
+
+  .field-value {
+    @apply text-foreground;
   }
 }
 
