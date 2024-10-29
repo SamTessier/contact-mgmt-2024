@@ -19,14 +19,18 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const sheetName = sheetNameFromParams(params);
   const url = new URL(request.url);
   const email = url.searchParams.get("email");
-  invariant(email, "Missing email");
+  
+  console.log("Edit page - Sheet name:", sheetName, "Email:", email); // Debug log
+  
+  if (!email) throw new Error("Email parameter is required");
 
   const result = await staffStudentDataLayer.getData(sheetName);
   const dataArray = sheetName === "Staff" ? result.staff : result.students;
-  invariant(dataArray, `No ${sheetName.toLowerCase()} data found`);
+  
+  if (!dataArray) throw new Error(`No ${sheetName.toLowerCase()} data found`);
   
   const data = dataArray.find(item => item.email === email);
-  invariant(data, `${sheetName} profile not found`);
+  if (!data) throw new Error(`${sheetName} profile not found`);
 
   return { data, sheetName };
 };

@@ -18,12 +18,12 @@ const sheetNameFromParams = (params) => {
 
 export const loader: LoaderFunction = async ({ params }) => {
   const sheetName = sheetNameFromParams(params);
+  console.log("Add page - Sheet name:", sheetName); // Debug log
   return { sheetName };
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const sheetName = url.pathname.split("/")[1];
+export const action: ActionFunction = async ({ request, params }) => {
+  const sheetName = sheetNameFromParams(params);
   const formData = await request.formData();
   
   // Convert FormData to a plain object
@@ -32,11 +32,15 @@ export const action: ActionFunction = async ({ request }) => {
     data[key] = value;
   });
 
-  // Capitalize first letter of sheetName for consistency
-  const normalizedSheetName = sheetName.charAt(0).toUpperCase() + sheetName.slice(1);
+  console.log('Adding data:', { sheetName, data }); // Debug log
   
-  await staffStudentDataLayer.addData(data, normalizedSheetName);
-  return redirect(`/${sheetName.toLowerCase()}`);
+  try {
+    await staffStudentDataLayer.addData(data, sheetName);
+    return redirect(`/${sheetName.toLowerCase()}`);
+  } catch (error) {
+    console.error('Error adding data:', error);
+    throw error;
+  }
 };
 
 export default function ProfileAddPage() {

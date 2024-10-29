@@ -41,7 +41,7 @@ export async function getData(auth: any, spreadsheetId: string, sheetName: strin
 
 export async function addData(auth: any, spreadsheetId: string, data: any, sheetName: string) {
   const sheets = google.sheets({ version: 'v4', auth });
-  const range = `${sheetName}!A:F`;
+  const range = `${sheetName}!A:Z`;
   const values = [Object.values(data)];
 
   await sheets.spreadsheets.values.append({

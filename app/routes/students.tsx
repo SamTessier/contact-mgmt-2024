@@ -40,7 +40,7 @@ export default function Students() {
   };
 
   const handleAddProfile = () => {
-    navigate("/students/add", { state: { sheetName: "Students" } });
+    navigate(`/${sheetName.toLowerCase()}/add`);
   };
 
   const filteredStudents = students.filter((student) => {

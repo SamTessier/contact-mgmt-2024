@@ -37,9 +37,9 @@ export default function Staff() {
     setSelectedProfile(profile);
     setIsModalOpen(true);
   };
-
+  
   const handleAddProfile = () => {
-    navigate("/staff/add", { state: { sheetName: "Staff" } });
+    navigate(`/${sheetName.toLowerCase()}/add`);
   };
 
   const filteredStaff = staff.filter((member) => {
